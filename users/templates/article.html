@@ -1,0 +1,48 @@
+{% load markdownify %}
+{% component "navbar_layout" %}
+	{% component "card" %}
+		{% fill "title" %}
+			{{article.title|markdownify}}
+		{% endfill %}
+
+		{% fill "default" %}
+		<p>
+	{{article.lead_paragraph|markdownify}}
+</p>
+<p>
+	{{article.background_context|markdownify}}
+</p>
+
+<p>
+	{{article.research_question|markdownify}}
+</p>
+
+<p>
+	{{article.simplified_methods|markdownify}}
+</p>
+
+<p>
+	{{article.core_findings|markdownify}}
+</p>
+
+<p>
+	{{article.surprise_finding|markdownify}}
+</p>
+
+<p>
+	{{article.future_implications|markdownify}}
+</p>
+
+<p>
+	{{article.study_limitations|markdownify}}
+</p>
+
+<p>
+	{{article.next_steps|markdownify}}
+</p>
+		{% endfill %}
+
+	{% endcomponent %}
+
+
+{% endcomponent %}

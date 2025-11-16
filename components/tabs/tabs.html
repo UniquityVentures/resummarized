@@ -1,0 +1,17 @@
+<div class="tabs tabs-border">
+	{% if tabs|length > 0 %}
+	<input type="radio" name="tab_name" class="tab" aria-label="{{tabs.0}}" checked/>
+
+  <div class="tab-content border-base-300 bg-base-100 p-10">
+		{% slot tabs.0 /%}
+		</div>
+	{% for tab in tabs|slice:"1:" %}
+	<input type="radio" name="tab_name" class="tab" aria-label="{{tab}}" />
+
+  <div class="tab-content border-base-300 bg-base-100 p-10">
+		{% slot tab /%}
+		</div>
+	{% endfor %}
+	{% endif %}
+
+</div>

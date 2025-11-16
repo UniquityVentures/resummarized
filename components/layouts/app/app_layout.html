@@ -1,0 +1,31 @@
+{% component "user" %}
+<div x-data="{ open: window.innerWidth >= 768 }" class="relative min-h-screen overflow-x-hidden">
+	<!-- Sidebar -->
+	<div class="fixed inset-y-0 left-0 z-40 w-69 bg-base-200 border-r border-base-300 transition-transform duration-300"
+		:class="open ? 'translate-x-0' : '-translate-x-full'">
+		<div class="h-full overflow-y-auto p-4">
+			{% slot "sidebar" / %}
+		</div>
+	</div>
+
+	<div class="relative transition-all duration-300" :class="open ? 'md:ml-69' : 'md:ml-0'">
+		<!-- Toggle button (in content), positioned top-4 right-4 -->
+		<button type="button" class="btn btn-active btn-square btn-sm absolute top-4 left-4 z-30" @click="open = !open">
+			{% heroicon_mini "bars-3" %}
+		</button>
+	</div>
+
+	<!-- Content -->
+	<div class="transition-all duration-300" :class="open ? 'md:ml-69' : 'md:ml-0'">
+		<div class="relative">
+			<div class="mt-16">
+				{% slot "default" / %}
+			</div>
+		</div>
+	</div>
+
+	<!-- Mobile overlay backdrop -->
+	<div class="fixed inset-0 bg-black/40 z-30 md:hidden" x-show="open" x-transition.opacity @click="open = false">
+	</div>
+</div>
+{% endcomponent %}
