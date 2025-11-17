@@ -46,7 +46,10 @@ COMPONENTS = {
 INSTALLED_APPS = [
     "tailwind",
     "theme",
+    "celery",
+    "celery_progress",
     "heroicons",
+    "django_extensions",
     "markdownify",
     "crispy_forms",
     "crispy_daisyui",

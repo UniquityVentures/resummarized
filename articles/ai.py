@@ -1,4 +1,5 @@
 from google import genai
+from celery_progress.backend import ProgressRecorder
 from google.genai import types
 from .models import Source, ArxivSource, WebSource, Article
 from typing import List
@@ -11,18 +12,37 @@ client = genai.Client()
 class AIArticleGenerator:
     source: Source
     chat: genai.chats.Chat
+    total_steps: int
+    current_step: int
 
-    def __init__(self, source: Source, model: str = "models/gemini-2.5-flash"):
+    def increment_step(self, message=None):
+        self.current_step += 1
+        self.progress_recorder.set_progress(
+            self.current_step,
+            self.total_steps,
+            f"Processing item {self.current_step}..."
+            if message is not None
+            else message,
+        )
+
+    def __init__(
+        self,
+        progress_recorder: ProgressRecorder,
+        source: Source,
+        model: str = "models/gemini-2.5-flash",
+    ):
         self.model = model
         self.source = source
+        self.progress_recorder = progress_recorder
         files = []
-        for single_source in source.sources():
+        sources = source.sources()
+        self.total_steps = len(sources) + 1 + 10
+        for single_source in sources:
             if isinstance(single_source, ArxivSource):
                 files.append(self._process_arxiv_source(single_source))
             elif isinstance(single_source, WebSource):
                 files.append(self._process_web_source(single_source))
 
-        print(files)
         self.chat = client.chats.create(
             model=self.model,
             history=[
@@ -91,7 +111,8 @@ class AIArticleGenerator:
             ],
             max_output_tokens=500,
         )
-        print(lead_response_paragraph)
+
+        self.increment_step("Generating the lead paragraph")
 
         background_context = self._run_model(
             [
@@ -99,40 +120,45 @@ class AIArticleGenerator:
             ],
             max_output_tokens=1000,
         )
-        print(background_context)
+
+        self.increment_step("Generating the background context")
+
         research_question = self._run_model(
             [
                 "Now, please generate the research question based on the background context."
             ],
             max_output_tokens=500,
         )
-        print(research_question)
+
+        self.increment_step("Generating the research question")
 
         simplified_methods = self._run_model(
             ["Next, please generate the simplified methods section."],
             max_output_tokens=1000,
         )
-        print(simplified_methods)
+
+        self.increment_step("Generating the simplified methods")
 
         core_findings = self._run_model(
             ["Now, please generate the core findings of the research."],
             max_output_tokens=1000,
         )
-        print(core_findings)
+
+        self.increment_step("Generating the core findings")
 
         surprise_finding = self._run_model(
             ["Please generate any surprise findings from the study."],
             max_output_tokens=500,
         )
 
-        print(surprise_finding)
+        self.increment_step("Generating the surprise finding")
 
         future_implications = self._run_model(
             ["Now, please generate the future implications of the research findings."],
             max_output_tokens=500,
         )
 
-        print(future_implications)
+        self.increment_step("Generating the future implications")
 
         study_limitations = self._run_model(
             [
@@ -140,7 +166,8 @@ class AIArticleGenerator:
             ],
             max_output_tokens=500,
         )
-        print(study_limitations)
+
+        self.increment_step("Generating the study limitations")
 
         next_steps = self._run_model(
             [
@@ -148,13 +175,15 @@ class AIArticleGenerator:
             ],
             max_output_tokens=500,
         )
-        print(next_steps)
+
+        self.increment_step("Generating the next steps")
 
         title = self._run_model(
             ["Now, generate the title for the completed article."],
             max_output_tokens=100,
         )
-        print(title)
+
+        self.increment_step("Generating the title")
 
         article = Article(
             title=title,

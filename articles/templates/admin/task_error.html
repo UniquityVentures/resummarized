@@ -1,0 +1,15 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block content %}
+    <div id="content-main">
+        <h2>ERROR</h2>
+
+        <div id="progress-container">
+            <progress id="progress-bar" value="0" max="100" style="width: 100%;"></progress>
+            
+		<p id="progress-bar-message">{{message}}</p>
+        </div>
+
+    </div>
+{% endblock %}

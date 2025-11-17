@@ -1,6 +1,9 @@
 from django.contrib import admin
+from django.urls import reverse
+from django.http import HttpResponseRedirect
 from django.db import models
 from django.forms import TextInput
+from .tasks import generate_article
 from .models import (
     Source,
     ArxivSource,
@@ -8,8 +11,6 @@ from .models import (
     Article,
     UserArticleHistory,
 )
-
-from .ai import AIArticleGenerator
 
 # --- Inlines for Source Model ---
 class ArxivSourceInline(admin.TabularInline):
@@ -26,12 +27,18 @@ class WebSourceInline(admin.TabularInline):
     fields = ("url",)
     can_delete = True
 
+
+
 @admin.action(description="Create Articles from selected Sources")
 def make_article_from_source(modeladmin, request, queryset):
+    tasks = []
     for source in queryset:
-        generator = AIArticleGenerator(source)
-        article = generator.generate_article()
-        article.save()
+        tasks.append(generate_article.delay(source.id))
+
+    if len(tasks) > 0:
+        progress_url = reverse('article_generation_progress')
+            
+        return HttpResponseRedirect(f'{progress_url}?task_id={tasks[0].id}')
 
 # --- Source Admin ---
 @admin.register(Source)

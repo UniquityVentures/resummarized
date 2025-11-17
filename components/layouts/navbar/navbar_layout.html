@@ -4,7 +4,10 @@
 		<a class="btn btn-ghost text-xl">ReSummarized</a>
 		<label class="input">
 			{% heroicon_mini "magnifying-glass" %}
-			<input type="search" class="grow" placeholder="Search" />
+<form action="/articles/search_datalist/" fx-action="/articles/search_datalist/" fx-target="#articles-datalist">
+  <input id="search" type="search" name="query" placeholder="Search" fx-action="/articles/search_datalist/" fx-trigger="input" ext-fx-debounce="200" fx-target="#articles-datalist" list="articles-datalist"/>
+</form>
+			{% component "articles_datalist" / %}
 		</label>
 	</div>
 	<div class="flex-none">
