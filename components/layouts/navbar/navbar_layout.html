@@ -33,15 +33,25 @@
         </div>
         <div class="flex-none">
             {% if user %}
-                {% heroicon_mini "user-circle" %}
-            {% else %}
                 <div class="dropdown dropdown-end">
-                    <div tabindex="0" role="button" class="btn btn-ghost rounded-field">Login</div>
+                    <div tabindex="0" role="button" class="btn btn-ghost rounded-field">
+						{% heroicon_mini "user-circle" %}
+					</div>
                     <div tabindex="-1"
                          class="menu dropdown-content bg-base-200 rounded-box z-1 w-52 p-2 shadow-sm">
-                        @components.Login()
+						<form action={% url "logout"%} method="POST">
+							{% csrf_token %}
+							<button type="submit" class="btn" href={% url "logout" %}>
+								Logout
+							</button>
+						</form>
                     </div>
                 </div>
+            {% else %}
+						<a class="btn" href={% url "login" %}>
+							Login
+						</a>
+
             {% endif %}
         </div>
     </div>
