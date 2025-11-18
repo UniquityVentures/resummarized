@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.db import models
-from django.forms import TextInput
+from django.forms import Textarea, TextInput
 from .tasks import generate_article
 from .models import (
     Source,
@@ -20,12 +20,24 @@ class ArxivSourceInline(admin.TabularInline):
     fields = ("arxiv_id",)
     can_delete = True
 
+    formfield_overrides = {
+        models.TextField: {
+            "widget": TextInput(attrs={"size": 80})
+        },
+    }
+
 class WebSourceInline(admin.TabularInline):
     """Inline for WebSource linked to Source."""
     model = WebSource
     extra = 1
     fields = ("url",)
     can_delete = True
+
+    formfield_overrides = {
+        models.TextField: {
+            "widget": TextInput(attrs={"size": 80}) 
+        },
+    }
 
 
 
@@ -101,11 +113,9 @@ class ArticleAdmin(admin.ModelAdmin):
         }),
     )
 
-
-    # Make sure text fields use the large text input widget
     formfield_overrides = {
         models.TextField: {
-            "widget": TextInput(attrs={"size": 80})  # Use TextInput widget instead of TextArea
+            "widget": Textarea(attrs={"size": 80})
         },
     }
 

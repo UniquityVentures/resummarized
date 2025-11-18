@@ -21,3 +21,4 @@ def progress_view(request):
         return render(request, 'admin/task_error.html', {'message': 'Task ID not provided.'})
 
     return render(request, 'admin/task_progress.html', {'task_id': task_id})
+

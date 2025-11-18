@@ -33,5 +33,6 @@ class DashboardPage(TemplateView):
         from articles.models import Article
         context = super().get_context_data(**kwargs)
         context['user'] = self.request.user
-        context['latest'] = Article.objects.all().order_by('-id')
+        context['latest'] = Article.objects.all().order_by('-id')[:3]
+        context['for_you'] = self.request.user.for_you()[:3]
         return context

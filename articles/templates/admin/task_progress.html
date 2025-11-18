@@ -10,24 +10,24 @@
         {% if task_id %}
             <script src="{% static 'celery_progress/celery_progress.js' %}"></script>
             <script>
-			document.addEventListener("DOMContentLoaded", function () {
-                const progressUrl = "{% url 'celery_progress:task_status' '0' %}".replace('0', "{{ task_id }}");
+                document.addEventListener("DOMContentLoaded", function () {
+                    const progressUrl = "{% url 'celery_progress:task_status' '0' %}".replace('0', "{{ task_id }}");
 
-				const a = new CeleryProgressBar(progressUrl,{
-                    progressBarId: 'progress-bar',
-                    progressBarMessageId: 'progress-bar-message',
-                    onSuccess: function(result, status) {
-                        document.getElementById('progress-bar-message').append("✅ ", result.final_message);
-                        setTimeout(function() {
-                            window.location.href = "{% url 'admin:articles_source_changelist' %}";
-                        }, 2000);
-                    },
-                    onError: function(result, error) {
-                        document.getElementById('progress-bar-message').append("❌ ERROR: ", status);
-                    }
+                    const a = new CeleryProgressBar(progressUrl,{
+                        progressBarId: 'progress-bar',
+                        progressBarMessageId: 'progress-bar-message',
+                        onSuccess: function(result, status) {
+                            document.getElementById('progress-bar-message').append("✅ ", result.final_message);
+                            setTimeout(function() {
+                                window.location.href = "{% url 'admin:articles_source_changelist' %}";
+                            }, 2000);
+                        },
+                        onError: function(result, error) {
+                            document.getElementById('progress-bar-message').append("❌ ERROR: ", status);
+                        }
+                    });
+                    a.connect();
                 });
-				a.connect();
-			});
             </script>
         {% endif %}
     </div>

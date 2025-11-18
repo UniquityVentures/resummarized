@@ -1,0 +1,14 @@
+{% load markdownify %}
+<a href="{% url 'article' article.id %}" {% html_attrs attrs%}>
+	{% component "card" %}
+	{% fill "title" %}
+	{{ article.title|markdownify }}
+	{% endfill %}
+	{% fill "default" %}
+	<p>{{ article.lead_paragraph|slice:":200"|markdownify }} ...</p>
+	{% endfill %}
+	{% fill "actions" %}
+	<p>{{ article.created_at }}</p>
+	{% endfill %}
+	{% endcomponent %}
+</a>
