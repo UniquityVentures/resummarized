@@ -13,10 +13,13 @@ class AIArticleGenerator:
     source: Source
     chat: genai.chats.Chat
     total_steps: int
-    current_step: int
+    current_step: int = 0
 
     def increment_step(self, message=None):
         self.current_step += 1
+        print(
+            f"Processing item {self.current_step}..."
+        )
         self.progress_recorder.set_progress(
             self.current_step,
             self.total_steps,
@@ -92,6 +95,7 @@ class AIArticleGenerator:
         You will generate the parts of the article step by step.
         Don't add anything extra outside of the requested sections.
         Don't use any syntax outside of markdown, only output the markdown, nothing else.
+        NOTE: All sections are required, do not skip any sections.
         The article should include the following sections:
 
         title = models.TextField(description="Short catchy title that will be displayed at the top of article and in listings.")

@@ -32,7 +32,9 @@ class WebSourceInline(admin.TabularInline):
 @admin.action(description="Create Articles from selected Sources")
 def make_article_from_source(modeladmin, request, queryset):
     tasks = []
+    print("Starting to queue article generation tasks...")
     for source in queryset:
+        print(f"Queuing article generation for Source ID: {source.id}")
         tasks.append(generate_article.delay(source.id))
 
     if len(tasks) > 0:

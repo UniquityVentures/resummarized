@@ -8,6 +8,7 @@ dependencies = [
     "celery>=5.5.3",
     "celery-progress>=0.5",
     "crispy-daisyui>=0.8.0",
+    "django-celery-results>=2.6.0",
     "django-components>=0.143.2",
     "django-crispy-forms>=2.5",
     "django-extensions>=4.1",

@@ -10,10 +10,10 @@
         {% if task_id %}
             <script src="{% static 'celery_progress/celery_progress.js' %}"></script>
             <script>
+			document.addEventListener("DOMContentLoaded", function () {
                 const progressUrl = "{% url 'celery_progress:task_status' '0' %}".replace('0', "{{ task_id }}");
 
-                CeleryProgress.init({
-                    progressUrl: progressUrl,
+				const a = new CeleryProgressBar(progressUrl,{
                     progressBarId: 'progress-bar',
                     progressBarMessageId: 'progress-bar-message',
                     onSuccess: function(result, status) {
@@ -26,6 +26,8 @@
                         document.getElementById('progress-bar-message').innerText = "❌ ERROR: " + status;
                     }
                 });
+				a.connect();
+			});
             </script>
         {% endif %}
     </div>

@@ -20,6 +20,7 @@ To run:
 
 ```bash
 uv run manage.py tailwind dev
+uv run celery -A resummarized_django worker
 ```
 
 

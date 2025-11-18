@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "celery_progress",
     "heroicons",
     "django_extensions",
+    "django_celery_results",
     "markdownify",
     "crispy_forms",
     "crispy_daisyui",
@@ -170,6 +171,7 @@ TAILWIND_APP_NAME = "theme"
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "daisyui"
 CRISPY_TEMPLATE_PACK = "daisyui"
+CELERY_RESULT_BACKEND = 'django-db'
 
 if DEBUG:
     # Add django_browser_reload only in DEBUG mode
@@ -177,4 +179,5 @@ if DEBUG:
     MIDDLEWARE += [
         "django_browser_reload.middleware.BrowserReloadMiddleware",
     ]
+
 
