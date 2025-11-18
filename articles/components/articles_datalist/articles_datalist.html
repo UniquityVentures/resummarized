@@ -1,5 +1,4 @@
-<datalist id="articles-datalist">
-	{% for article in articles %}
-		<option value="{{ article.id }}">{{article.title}}</option>
-	{% endfor %}
-</datalist>
+{% for article in articles %}
+    <li>
+        <a href={% url 'article' article.id %}>{{ article.title|slice:":80" }}...</a>
+{% endfor %}

@@ -1,13 +1,9 @@
 <div class="card border border-base-300 bg-base-100 shadow-md p-4 mb-2">
-	{% if component_vars.slots.title %}
-	<h2 class="card-title mb-2">{% slot "title" / %}</h2>
-	{% endif %}
-	<div class="card-body">
-		{% slot "default" / %}
-	</div>
-	{% if component_vars.slots.actions %}
-	<div class="justify-end card-actions">
-		{% slot "actions" / %}
-	</div>
-	{% endif %}
+    {% if component_vars.slots.title %}
+        <h2 class="card-title mb-2">{% slot "title" / %}</h2>
+    {% endif %}
+    <div class="card-body">{% slot "default" / %}</div>
+    {% if component_vars.slots.actions %}
+        <div class="justify-end card-actions">{% slot "actions" / %}</div>
+    {% endif %}
 </div>

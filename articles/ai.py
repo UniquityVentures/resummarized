@@ -88,10 +88,16 @@ class AIArticleGenerator:
         You are an expert article writer. Based on the provided sources, generate a comprehensive article.
         Ensure the article is well-structured, informative, and engaging.
         Use proper citations where necessary.
+        Don't use references in the article, for figures or anything else.
         You will generate the parts of the article step by step.
+        Don't add anything extra outside of the requested sections.
+        Don't use any syntax outside of markdown, only output the markdown, nothing else.
         The article should include the following sections:
 
         title = models.TextField(description="Short catchy title that will be displayed at the top of article and in listings.")
+
+        For the following, use as much markdown as is required to format the text properly.
+
         background_context = models.TextField(description="Contextual information leading up to the research.")
         research_question = models.TextField(description="The primary question the research aims to answer.")
         simplified_methods = models.TextField(description="A simplified explanation of the methods used in the study.")
@@ -109,7 +115,7 @@ class AIArticleGenerator:
                 "We will be generating title in the final step."
                 "Please generate the lead paragraph of the article.",
             ],
-            max_output_tokens=500,
+            max_output_tokens=250,
         )
 
         self.increment_step("Generating the lead paragraph")

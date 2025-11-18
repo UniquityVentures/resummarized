@@ -1,19 +1,16 @@
 {% component "base_layout" %}
-<div class="min-h-screen">
-	<div class="fixed top-4 right-4 flex gap-2 z-50">
-		<a href="{% url 'apps' %}" class="btn btn-square btn-neutral btn-sm gap-2">
-			{% heroicon_mini "squares-2x2" %}
-		</a>
-		<button type="button" class="btn btn-sm btn-square btn-info">
-			{% heroicon_mini "user" %}
-		</button>
-		<form method="post" action="{% url 'logout' %}">
-			{% csrf_token %}
-			<button type="submit" class="btn btn-sm btn-square btn-error">
-				{% heroicon_mini "arrow-right-start-on-rectangle" %}
-			</button>
-		</form>
-	</div>
-	{% slot "default" / %}
-</div>
+    <div class="min-h-screen">
+        <div class="fixed top-4 right-4 flex gap-2 z-50">
+            <a href="{% url 'apps' %}"
+               class="btn btn-square btn-neutral btn-sm gap-2">{% heroicon_mini "squares-2x2" %}</a>
+            <button type="button" class="btn btn-sm btn-square btn-info">{% heroicon_mini "user" %}</button>
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-square btn-error">
+                    {% heroicon_mini "arrow-right-start-on-rectangle" %}
+                </button>
+            </form>
+        </div>
+        {% slot "default" / %}
+    </div>
 {% endcomponent %}

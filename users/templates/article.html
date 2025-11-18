@@ -1,45 +1,73 @@
 {% load markdownify %}
 {% component "navbar_layout" %}
-	{% component "card" %}
-		{% fill "title" %}
-			{{article.title|markdownify}}
-		{% endfill %}
-
-		{% fill "default" %}
-		<p>
-	{{article.lead_paragraph|markdownify}}
-</p>
-<p>
-	{{article.background_context|markdownify}}
-</p>
-
-<p>
-	{{article.research_question|markdownify}}
-</p>
-
-<p>
-	{{article.simplified_methods|markdownify}}
-</p>
-
-<p>
-	{{article.core_findings|markdownify}}
-</p>
-
-<p>
-	{{article.surprise_finding|markdownify}}
-</p>
-
-<p>
-	{{article.future_implications|markdownify}}
-</p>
-
-<p>
-	{{article.study_limitations|markdownify}}
-</p>
-
-<p>
-	{{article.next_steps|markdownify}}
-</p>
-		{% endfill %}
-	{% endcomponent %}
+    {% component "card" %}
+        {% fill "title" %}
+            {{ article.title|markdownify }}
+        {% endfill %}
+        {% fill "default" %}
+            {% if article.lead_paragraph|length > 0 %}
+                {% component "collapsible" title="Introduction" %}
+                    {% fill "content" %}
+                        <p>{{ article.lead_paragraph|markdownify }}</p>
+                    {% endfill %}
+                {% endcomponent %}
+            {% endif %}
+            {% if article.background_context|length > 0 %}
+                {% component "collapsible" title="Background Context" %}
+                    {% fill "content" %}
+                        <p>{{ article.background_context|markdownify }}</p>
+                    {% endfill %}
+                {% endcomponent %}
+            {% endif %}
+            {% if article.research_direction|length > 0 %}
+                {% component "collapsible" title="Research Direction" %}
+                    {% fill "content" %}
+                        <p>{{ article.research_direction|markdownify }}</p>
+                    {% endfill %}
+                {% endcomponent %}
+            {% endif %}
+            {% if article.simplified_methods|length > 0 %}
+                {% component "collapsible" title="Simplified Methods" %}
+                    {% fill "content" %}
+                        <p>{{ article.simplified_methods|markdownify }}</p>
+                    {% endfill %}
+                {% endcomponent %}
+            {% endif %}
+            {% if article.core_findings|length > 0 %}
+                {% component "collapsible" title="Core Findings" %}
+                    {% fill "content" %}
+                        <p>{{ article.core_findings|markdownify }}</p>
+                    {% endfill %}
+                {% endcomponent %}
+            {% endif %}
+            {% if article.surprise_findings|length > 0 %}
+                {% component "collapsible" title="Surprise Findings" %}
+                    {% fill "content" %}
+                        <p>{{ article.surprise_findings|markdownify }}</p>
+                    {% endfill %}
+                {% endcomponent %}
+            {% endif %}
+            {% if article.future_implications|length > 0 %}
+                {% component "collapsible" title="Future Implications" %}
+                    {% fill "content" %}
+                        <p>{{ article.future_implications|markdownify }}</p>
+                    {% endfill %}
+                {% endcomponent %}
+            {% endif %}
+            {% if article.study_limitations|length > 0 %}
+                {% component "collapsible" title="Study Limitations" %}
+                    {% fill "content" %}
+                        <p>{{ article.study_limitations|markdownify }}</p>
+                    {% endfill %}
+                {% endcomponent %}
+            {% endif %}
+            {% if article.next_steps|length > 0 %}
+                {% component "collapsible" title="Next Steps" %}
+                    {% fill "content" %}
+                        <p>{{ article.next_steps|markdownify }}</p>
+                    {% endfill %}
+                {% endcomponent %}
+            {% endif %}
+        {% endfill %}
+    {% endcomponent %}
 {% endcomponent %}

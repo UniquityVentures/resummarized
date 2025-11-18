@@ -1,12 +1,11 @@
 {% load crispy_forms_tags %}
-
 {% component "navbar_layout" %}
-<div class="container mt-4">
-	<h2 class="text-xl mb-2">User Profile</h2>
-	<form method="post" enctype="multipart/form-data">
-		{% csrf_token %}
-		{{ form|crispy }}
-		<button type="submit" class="btn mt-4 btn-primary">Update Profile</button>
-	</form>
-</div>
+    <div class="container mt-4">
+        <h2 class="text-xl mb-2">User Profile</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <button type="submit" class="btn mt-4 btn-primary">Update Profile</button>
+        </form>
+    </div>
 {% endcomponent %}

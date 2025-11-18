@@ -1,47 +1,41 @@
 {% load markdownify %}
 {% component "navbar_layout" %}
-<div class="container mt-4">
-	{% component "tabs" tabs=["For You", "Latest"] %}
-		{% fill "For You" %}
-			{% for article in user.for_you %}
-				<a href="{% url 'article' article.id %}">
-				{% component "card" %}
-					{% fill "title" %}
-						{{article.title|markdownify}}
-					{% endfill %}
-
-					{% fill "default" %}
-					<p>{{article.lead_paragraph|slice:":200"|markdownify}} ...</p>
-					{% endfill %}
-
-					{% fill "actions" %}
-	<p>{{article.created_at}}</p>
-					{% endfill %}
-				{% endcomponent %}
-				</a>
-			{% endfor %}
-		{% endfill %}
-
-		{% fill "Latest" %}
-			{% for article in latest %}
-				<a href="{% url 'article' article.id %}">
-				{% component "card" %}
-					{% fill "title" %}
-						{{article.title|markdownify}}
-					{% endfill %}
-
-					{% fill "default" %}
-					<p>{{article.lead_paragraph|slice:":200"|markdownify}} ...</p>
-					{% endfill %}
-
-					{% fill "actions" %}
-	<p>{{article.created_at}}</p>
-					{% endfill %}
-				{% endcomponent %}
-
-				</a>
-			{% endfor %}
-		{% endfill %}
-	{% endcomponent %}
-</div>
+    <div class="container mt-4">
+        {% component "tabs" tabs=["For You", "Latest"] %}
+            {% fill "For You" %}
+                {% for article in user.for_you %}
+                    <a href="{% url 'article' article.id %}">
+                        {% component "card" %}
+                            {% fill "title" %}
+                                {{ article.title|markdownify }}
+                            {% endfill %}
+                            {% fill "default" %}
+                                <p>{{ article.lead_paragraph|slice:":200"|markdownify }} ...</p>
+                            {% endfill %}
+                            {% fill "actions" %}
+                                <p>{{ article.created_at }}</p>
+                            {% endfill %}
+                        {% endcomponent %}
+                    </a>
+                {% endfor %}
+            {% endfill %}
+            {% fill "Latest" %}
+                {% for article in latest %}
+                    <a href="{% url 'article' article.id %}">
+                        {% component "card" %}
+                            {% fill "title" %}
+                                {{ article.title|markdownify }}
+                            {% endfill %}
+                            {% fill "default" %}
+                                <p>{{ article.lead_paragraph|slice:":200"|markdownify }} ...</p>
+                            {% endfill %}
+                            {% fill "actions" %}
+                                <p>{{ article.created_at }}</p>
+                            {% endfill %}
+                        {% endcomponent %}
+                    </a>
+                {% endfor %}
+            {% endfill %}
+        {% endcomponent %}
+    </div>
 {% endcomponent %}

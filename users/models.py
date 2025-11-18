@@ -49,11 +49,10 @@ class User(AbstractBaseUser, PermissionsMixin):
             .values("article__vector")
             .aggregate(Avg("article__vector__vector"))
         )
-        print(user_preference)
 
         user_preference_vector = (
             user_preference["article__vector__vector__avg"]
-            if user_preference["article__vector__vector__avg"]
+            if user_preference["article__vector__vector__avg"] is not None
             else [0] * 768
         )
 

@@ -1,21 +1,17 @@
 {% extends "admin/base_site.html" %}
 {% load static %}
-
 {% block content %}
     <div id="content-main">
         <h2>Long-Running Task Progress</h2>
-
         <div id="progress-container">
             <progress id="progress-bar" value="0" max="100" style="width: 100%;"></progress>
-            
             <p id="progress-bar-message">Task initiated...</p>
         </div>
-
         {% if task_id %}
             <script src="{% static 'celery_progress/celery_progress.js' %}"></script>
             <script>
                 const progressUrl = "{% url 'celery_progress:task_status' '0' %}".replace('0', "{{ task_id }}");
-                
+
                 CeleryProgress.init({
                     progressUrl: progressUrl,
                     progressBarId: 'progress-bar',
@@ -27,7 +23,7 @@
                         }, 2000);
                     },
                     onError: function(result, status) {
-                         document.getElementById('progress-bar-message').innerText = "❌ ERROR: " + status;
+                        document.getElementById('progress-bar-message').innerText = "❌ ERROR: " + status;
                     }
                 });
             </script>
