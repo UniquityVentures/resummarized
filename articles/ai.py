@@ -42,8 +42,10 @@ class AIArticleGenerator:
         self.total_steps = len(sources) + 1 + 10
         for single_source in sources:
             if isinstance(single_source, ArxivSource):
+                self.increment_step("Processing Arxiv Source")
                 files.append(self._process_arxiv_source(single_source))
             elif isinstance(single_source, WebSource):
+                self.increment_step("Processing Web Source")
                 files.append(self._process_web_source(single_source))
 
         self.chat = client.chats.create(
@@ -80,11 +82,12 @@ class AIArticleGenerator:
             temp.seek(0)
             return types.Part.from_bytes(data=temp.read(), mime_type="text/html")
 
-    def _run_model(self, text: List[str], max_output_tokens: int):
-        return self.chat.send_message(
+    def _run_model(self, text: List[str]):
+        resp = self.chat.send_message(
             message=[types.Part.from_text(text=text_segment) for text_segment in text],
-            config=types.GenerateContentConfig(max_output_tokens=max_output_tokens),
-        ).text
+        )
+        print(resp)
+        return resp.text
 
     def generate_article(self) -> Article:
         prompt = """
@@ -119,7 +122,6 @@ class AIArticleGenerator:
                 "We will be generating title in the final step."
                 "Please generate the lead paragraph of the article.",
             ],
-            max_output_tokens=250,
         )
 
         self.increment_step("Generating the lead paragraph")
@@ -128,7 +130,6 @@ class AIArticleGenerator:
             [
                 "Great! Now, based on the lead paragraph please generate the background context."
             ],
-            max_output_tokens=1000,
         )
 
         self.increment_step("Generating the background context")
@@ -137,35 +138,30 @@ class AIArticleGenerator:
             [
                 "Now, please generate the research question based on the background context."
             ],
-            max_output_tokens=500,
         )
 
         self.increment_step("Generating the research question")
 
         simplified_methods = self._run_model(
             ["Next, please generate the simplified methods section."],
-            max_output_tokens=1000,
         )
 
         self.increment_step("Generating the simplified methods")
 
         core_findings = self._run_model(
             ["Now, please generate the core findings of the research."],
-            max_output_tokens=1000,
         )
 
         self.increment_step("Generating the core findings")
 
         surprise_finding = self._run_model(
             ["Please generate any surprise findings from the study."],
-            max_output_tokens=500,
         )
 
         self.increment_step("Generating the surprise finding")
 
         future_implications = self._run_model(
             ["Now, please generate the future implications of the research findings."],
-            max_output_tokens=500,
         )
 
         self.increment_step("Generating the future implications")
@@ -174,7 +170,6 @@ class AIArticleGenerator:
             [
                 "Please outline the study limitations that may affect interpretation of results."
             ],
-            max_output_tokens=500,
         )
 
         self.increment_step("Generating the study limitations")
@@ -183,14 +178,12 @@ class AIArticleGenerator:
             [
                 "Finally, please suggest next steps for future research based on the study."
             ],
-            max_output_tokens=500,
         )
 
         self.increment_step("Generating the next steps")
 
         title = self._run_model(
             ["Now, generate the title for the completed article."],
-            max_output_tokens=100,
         )
 
         self.increment_step("Generating the title")

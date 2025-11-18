@@ -1,0 +1,3 @@
+- Infinite Scrolling for articles
+- Profile Button on Navbar functional
+- Review UI from the start

@@ -17,13 +17,13 @@
                     progressBarId: 'progress-bar',
                     progressBarMessageId: 'progress-bar-message',
                     onSuccess: function(result, status) {
-                        document.getElementById('progress-bar-message').innerText = "✅ " + result.final_message;
+                        document.getElementById('progress-bar-message').append("✅ ", result.final_message);
                         setTimeout(function() {
                             window.location.href = "{% url 'admin:articles_source_changelist' %}";
                         }, 2000);
                     },
-                    onError: function(result, status) {
-                        document.getElementById('progress-bar-message').innerText = "❌ ERROR: " + status;
+                    onError: function(result, error) {
+                        document.getElementById('progress-bar-message').append("❌ ERROR: ", status);
                     }
                 });
 				a.connect();
