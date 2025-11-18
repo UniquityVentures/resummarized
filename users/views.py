@@ -11,6 +11,7 @@ class LoginPage(LoginView):
     template_name = 'login.html'
     authentication_form = LoginForm
     redirect_authenticated_user = True
+    next_page = "/dashboard/"
 
 
 class LogoutPage(LogoutView):
@@ -19,7 +20,7 @@ class LogoutPage(LogoutView):
 class ProfilePage(FormView):
     template_name = 'profile.html'
     form_class = ProfileForm
-    success_url = "/accounts/"
+    success_url = "/dashboard/"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
