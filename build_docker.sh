@@ -2,4 +2,4 @@
 
 git archive --output source.tar master
 
-docker build . --file Dockerfile --tag resummarized:$(date +%s)
+docker build . --file Dockerfile -o local --tag resummarized:$(date +%s)
