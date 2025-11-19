@@ -1,13 +1,13 @@
 # Use the official Python runtime image
-FROM ghcr.io/astral-sh/uv:alpine
+FROM ghcr.io/astral-sh/uv:python3.14-trixie
  
 # Create the app directory
 RUN mkdir /app
  
 WORKDIR /app
  
-ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1 
+ENV UV_COMPILE_BYTECODE=1
 
 ADD --unpack=true source.tar /app
  
