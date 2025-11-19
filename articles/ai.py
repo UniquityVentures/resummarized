@@ -6,7 +6,6 @@ from typing import List
 import requests
 import tempfile
 
-client = genai.Client()
 
 
 class AIArticleGenerator:
@@ -34,6 +33,7 @@ class AIArticleGenerator:
         source: Source,
         model: str = "models/gemini-2.5-flash",
     ):
+        self.client = genai.Client()
         self.model = model
         self.source = source
         self.progress_recorder = progress_recorder
@@ -48,7 +48,7 @@ class AIArticleGenerator:
                 self.increment_step("Processing Web Source")
                 files.append(self._process_web_source(single_source))
 
-        self.chat = client.chats.create(
+        self.chat = self.client.chats.create(
             model=self.model,
             history=[
                 types.Content(
