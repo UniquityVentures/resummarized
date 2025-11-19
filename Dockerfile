@@ -19,6 +19,4 @@ uv run manage.py tailwind install
 uv run manage.py tailwind build
 EOF
 
-ENTRYPOINT ["uv", "run", "celery", "-A", "resummarized_django", "worker"]
-
-ENTRYPOINT ["uv", "run", "manage.py", "runserver", "0.0.0.0:8000"]
+ENTRYPOINT ["./entrypoint.sh"]
