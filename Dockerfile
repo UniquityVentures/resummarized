@@ -10,7 +10,7 @@ WORKDIR /app
 ENV PYTHONUNBUFFERED=1 
 ENV UV_COMPILE_BYTECODE=1
 
-ADD --unpack=true source.tar /app
+ADD . /app
  
 # Expose the Django port
 EXPOSE 8000
