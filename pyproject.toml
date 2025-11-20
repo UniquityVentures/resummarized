@@ -16,6 +16,7 @@ dependencies = [
     "django-tailwind[cookiecutter,honcho,reload]>=4.4.1",
     "dotenv>=0.9.9",
     "google-genai>=1.50.1",
+    "granian>=2.6.0",
     "heroicons>=2.13.0",
     "pgvector>=0.4.1",
     "psycopg2-binary>=2.9.11",

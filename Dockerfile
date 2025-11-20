@@ -1,42 +1,53 @@
-# Use the official Python runtime image
-FROM ghcr.io/astral-sh/uv:python3.14-trixie
+# --- BUILD STAGE ---
+FROM ghcr.io/astral-sh/uv:python3.14-trixie-slim AS builder
 
-RUN rm /bin/sh && ln -s /bin/bash /bin/sh
-# Create the app directory
-RUN mkdir /app
- 
 WORKDIR /app
- 
-ENV PYTHONUNBUFFERED=1 
+
+# Cloud Run must listen on $PORT, defaulting to 8080.
+ENV PORT=8080
+ENV PYTHONUNBUFFERED=1
 ENV UV_COMPILE_BYTECODE=1
 
-ADD . /app
- 
-# Expose the Django port
-EXPOSE 8000
-
-RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
-
-# Install base dependencies
-RUN apt-get update && apt-get install -y -q --no-install-recommends \
-        apt-transport-https \
-        build-essential \
-        ca-certificates \
-        curl \
-        git \
-        libssl-dev \
-        wget \
+# Install essential build tools, Git, and Node.js dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    curl \
+    git \
+    libssl-dev \
+    && curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - \
+    && apt-get install -y nodejs \
     && rm -rf /var/lib/apt/lists/*
 
+ADD . /app
 
-# Install nvm with node and npm
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+# Run Tailwind build
+RUN uv run manage.py tailwind install && \
+    uv run manage.py tailwind build
 
-RUN <<EOF
-\. "$HOME/.nvm/nvm.sh"
-nvm install 24
-uv run manage.py tailwind install
-uv run manage.py tailwind build
-EOF
+# Final preparations (e.g., collect static files for Django)
+RUN uv run manage.py collectstatic --noinput
 
+# --- FINAL STAGE ---
+# Use the smallest possible image for the final runtime
+FROM ghcr.io/astral-sh/uv:python3.14-trixie-slim AS final
+
+WORKDIR /app
+
+# Set critical environment variables
+ENV PORT=8080
+ENV PYTHONUNBUFFERED=1
+ENV UV_COMPILE_BYTECODE=1
+
+# Copy only the necessary files from the build stage:
+# 1. Application code (including static/compiled files)
+# 2. Installed Python virtual environment
+COPY --from=builder /app /app
+
+# Ensure the virtual environment's binaries are in the PATH
+ENV PATH="/app/.venv/bin:$PATH"
+
+
+EXPOSE 8080
+
+# The entrypoint script will handle starting both Celery and Gunicorn.
 ENTRYPOINT ["/app/entrypoint.sh"]
