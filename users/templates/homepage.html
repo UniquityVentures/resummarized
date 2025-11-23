@@ -1,0 +1,12 @@
+{% load markdownify %}
+{% component "navbar_layout" %}
+	{% component "card" %}
+		{% fill "title" %}
+			Latest Articles
+		{% endfill %}
+		{% fill "default" %}
+		{% component "latest_articles" %}
+					{% endcomponent %}
+	{% endfill %}
+	{% endcomponent %}
+{% endcomponent %}

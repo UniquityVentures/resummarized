@@ -9,8 +9,9 @@ class ArticlePage(TemplateView):
         context = super().get_context_data(**kwargs)
         article_id = self.kwargs.get('article_id')
         context['article'] = Article.objects.get(id=article_id)
-        UserArticleHistory.objects.create(article_id=article_id, user=self.request.user)
-        context['history'] = UserArticleHistory.objects.filter(article_id=article_id)
+        if self.request.user.is_authenticated:
+            UserArticleHistory.objects.create(article_id=article_id, user=self.request.user)
+            context['history'] = UserArticleHistory.objects.filter(article_id=article_id)
         return context
 
 

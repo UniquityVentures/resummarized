@@ -1,4 +1,5 @@
 from google import genai
+from bs4 import BeautifulSoup
 from celery_progress.backend import ProgressRecorder
 from google.genai import types
 from .models import Source, ArxivSource, WebSource, Article
@@ -7,18 +8,46 @@ import requests
 import tempfile
 
 
-
 class AIArticleGenerator:
     source: Source
     chat: genai.chats.Chat
     total_steps: int
     current_step: int = 0
 
+    system_prompt = """
+        You are an expert article writer. Based on the provided sources, generate a comprehensive article.
+        Ensure the article is well-structured, informative, and engaging.
+        Use proper citations where necessary.
+        Don't use references in the article, for figures or anything else.
+        You will generate the parts of the article step by step.
+        Don't add anything extra outside of the requested sections.
+        Don't use any syntax outside of markdown, only output the markdown, nothing else.
+        NOTE: All sections are required, do not skip any sections.
+        Use markdown lists for highlighting key points and insights.
+        Use markdown tables for higlighting key differences.
+        Add a line break before adding in markdown lists.
+        The article should include the following sections:
+        Make sure a single line is not very long, ensure frequent line breaks and shorter and more numerous paragraphs
+        Since we are going to be generating the article step by step, only respond with text of what was requested at each step
+
+        title = models.TextField(description="Short catchy title that will be displayed at the top of article and in listings.")
+
+        For the following, use as much markdown as is required to format the text properly.
+
+        lead_paragraph = models.TextField(description="Catchy leading paragraph that will be shown on the article listing along with the title")
+        background_context = models.TextField(description="Contextual information leading up to the research.")
+        research_question = models.TextField(description="The primary question the research aims to answer.")
+        simplified_methods = models.TextField(description="A simplified explanation of the methods used in the study.")
+        core_findings = models.TextField(description="The main findings of the research.")
+        surprise_finding = models.TextField(description="Any unexpected results from the study.")
+        future_implications = models.TextField(description="The potential implications of the research findings.")
+        study_limitations = models.TextField(description="Limitations of the study that may affect interpretation of results.")
+        next_steps = models.TextField(description="Suggested future research directions based on the study.")
+    """
+
     def increment_step(self, message=None):
         self.current_step += 1
-        print(
-            f"Processing item {self.current_step}..."
-        )
+        print(f"Processing item {self.current_step}...")
         self.progress_recorder.set_progress(
             self.current_step,
             self.total_steps,
@@ -31,7 +60,7 @@ class AIArticleGenerator:
         self,
         progress_recorder: ProgressRecorder,
         source: Source,
-        model: str = "models/gemini-2.5-flash",
+        model: str = "models/gemini-2.5-pro",
     ):
         self.client = genai.Client()
         self.model = model
@@ -74,50 +103,21 @@ class AIArticleGenerator:
         """Downloads the web page content from the URL and appends the text to conversation."""
         url = web_source.url
         response = requests.get(url, stream=True)
-        response.raise_for_status()  # Raise an exception for bad status codes
-        with tempfile.NamedTemporaryFile(mode="w+b", delete=True) as temp:
-            for chunk in response.iter_content(chunk_size=8192):
-                temp.write(chunk)
-            temp.flush()
-            temp.seek(0)
-            return types.Part.from_bytes(data=temp.read(), mime_type="text/html")
+        response.raise_for_status()
+        soup = BeautifulSoup(response.content, "html.parser")
+        text = bytearray("\n".join(soup.find_all(text=lambda s: len(s) > 32)), "utf-8")
+        return types.Part.from_bytes(data=text, mime_type="text/plain")
 
     def _run_model(self, text: List[str]):
         resp = self.chat.send_message(
             message=[types.Part.from_text(text=text_segment) for text_segment in text],
+            config=types.GenerateContentConfig(system_instruction=[self.system_prompt]),
         )
-        print(resp)
         return resp.text
 
     def generate_article(self) -> Article:
-        prompt = """
-        You are an expert article writer. Based on the provided sources, generate a comprehensive article.
-        Ensure the article is well-structured, informative, and engaging.
-        Use proper citations where necessary.
-        Don't use references in the article, for figures or anything else.
-        You will generate the parts of the article step by step.
-        Don't add anything extra outside of the requested sections.
-        Don't use any syntax outside of markdown, only output the markdown, nothing else.
-        NOTE: All sections are required, do not skip any sections.
-        The article should include the following sections:
-
-        title = models.TextField(description="Short catchy title that will be displayed at the top of article and in listings.")
-
-        For the following, use as much markdown as is required to format the text properly.
-
-        background_context = models.TextField(description="Contextual information leading up to the research.")
-        research_question = models.TextField(description="The primary question the research aims to answer.")
-        simplified_methods = models.TextField(description="A simplified explanation of the methods used in the study.")
-        core_findings = models.TextField(description="The main findings of the research.")
-        surprise_finding = models.TextField(description="Any unexpected results from the study.")
-        future_implications = models.TextField(description="The potential implications of the research findings.")
-        study_limitations = models.TextField(description="Limitations of the study that may affect interpretation of results.")
-        next_steps = models.TextField(description="Suggested future research directions based on the study.")
-            """
-
         lead_response_paragraph = self._run_model(
             [
-                prompt,
                 "Based on the provided sources, please generate the article step by step.",
                 "We will be generating title in the final step."
                 "Please generate the lead paragraph of the article.",

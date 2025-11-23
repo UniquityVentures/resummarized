@@ -81,21 +81,18 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "resummarized_django.urls"
 
+_TEMPLATE_LOADERS = [
+    "django.template.loaders.filesystem.Loader",
+    "django.template.loaders.app_directories.Loader",
+    "django_components.template_loader.Loader",
+]
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [BASE_DIR / "django_resummarized" / "templates"],
         "OPTIONS": {
-            "loaders": [
-                (
-                    "django.template.loaders.cached.Loader",
-                    [
-                        "django.template.loaders.filesystem.Loader",
-                        "django.template.loaders.app_directories.Loader",
-                        "django_components.template_loader.Loader",
-                    ],
-                )
-            ],
+            "loaders": _TEMPLATE_LOADERS if DEBUG else [("django.template.loaders.cached.Loader", _TEMPLATE_LOADERS)],
             "context_processors": [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",

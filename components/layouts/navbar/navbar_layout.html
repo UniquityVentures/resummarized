@@ -1,38 +1,37 @@
 {% component "base_layout" %}
     <div class="navbar bg-base-100 shadow-sm">
-        <div class="flex-1">
+        <div class="flex-1 flex items-center gap-2">
             <a class="btn btn-ghost text-xl" href="/">ReSummarized</a>
-            <form class="inline-flex focus:outline-transparent"
+            <form class="inline-flex focus:outline-transparent grow"
                   action="/articles/search_datalist/"
                   fx-action="/articles/search_datalist/"
                   fx-target="#articles-datalist">
-                <label class="input">
-                    {% heroicon_mini "magnifying-glass" %}
-                    <div class="dropdown dropdown-end">
-                        <div tabindex="0" role="button" class="btn btn-ghost rounded-field">
-                            <input id="search"
-                                   type="search"
-                                   name="query"
-                                   placeholder="Search"
-                                   fx-action="/articles/search_datalist/"
-                                   fx-trigger="input"
-                                   ext-fx-debounce="200"
-                                   fx-target="#articles-datalist"
-                                   fx-swap="innerHTML"
-                                   list="articles-datalist" />
-                        </div>
-                        <ul tabindex="-1"
-                            id="articles-datalist"
-                            class="menu dropdown-content bg-base-200 rounded-box z-1 mt-4 w-52 p-2 shadow-sm">
-                            {% component "articles_datalist" %}
-                            {% endcomponent %}
-                        </ul>
-                    </div>
-                </label>
+                <div class="dropdown grow">
+                    <label class="input input-bordered flex items-center gap-2">
+                        {% heroicon_mini "magnifying-glass" %}
+                        <input id="search"
+                               type="search"
+                               name="query"
+                               class="grow"
+                               placeholder="Search"
+                               fx-action="/articles/search_datalist/"
+                               fx-trigger="input"
+                               ext-fx-debounce="200"
+                               fx-target="#articles-datalist"
+                               fx-swap="innerHTML"
+                               autocomplete="off" />
+                    </label>
+                    <ul tabindex="-1"
+                        id="articles-datalist"
+                        class="menu grow dropdown-content bg-base-200 rounded-box z-1 mt-4 w-[100%] p-2 shadow-sm">
+                        {% component "articles_datalist" %}
+                        {% endcomponent %}
+                    </ul>
+                </div>
             </form>
         </div>
         <div class="flex-none">
-            {% if user %}
+            {% if user.is_authenticated %}
                 <div class="dropdown dropdown-end">
                     <div tabindex="0" role="button" class="btn btn-ghost rounded-field">
 						{% heroicon_mini "user-circle" %}
@@ -50,6 +49,10 @@
             {% else %}
 						<a class="btn" href={% url "login" %}>
 							Login
+						</a>
+
+						<a class="btn" href={% url "signup" %}>
+							Signup
 						</a>
 
             {% endif %}

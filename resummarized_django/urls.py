@@ -19,17 +19,15 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 
-from .views import HomeRedirectView
-from users.views import DashboardPage
+from users.views import HomePageView
 
 urlpatterns = [
     path("", include("django_components.urls")),
     path("admin/", admin.site.urls),
-    path("", HomeRedirectView.as_view()),
+    path("", HomePageView.as_view(), name="homepage"),
     path("accounts/", include("users.urls")),
-    path('dashboard/', DashboardPage.as_view(), name='dashboard'),
     path("articles/", include("articles.urls")),
-    path(r'celery-progress/', include('celery_progress.urls')),  
+    path(r"celery-progress/", include("celery_progress.urls")),
 ]
 
 if settings.DEBUG:

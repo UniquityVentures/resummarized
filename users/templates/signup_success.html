@@ -1,0 +1,13 @@
+{% component "card_layout" %}
+    <div class="text-center">
+        <div class="flex justify-center mb-4">
+            {% heroicon_outline "check-circle" class="w-16 h-16 text-success" %}
+        </div>
+        <h2 class="card-title justify-center text-2xl mb-2">Account Created!</h2>
+        <p class="text-base-content/70 mb-6">Your account has been successfully created.</p>
+        <a href="{% url 'login' %}" class="btn btn-primary w-full">
+            Go to Login
+        </a>
+    </div>
+{% endcomponent %}
+

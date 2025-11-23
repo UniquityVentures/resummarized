@@ -9,7 +9,7 @@ class LatestArticles(component.Component):
     def get_template_data(self, args, kwargs, slots, context):
         offset = int(kwargs.get("offset", 0))
         limit = int(kwargs.get("limit", 10))
-        articles = list(Article.objects.all()[offset : offset + limit])
+        articles = list(Article.objects.all().order_by("-created_at")[offset : offset + limit])
 
         if len(articles) > 0:
             last = articles.pop()
