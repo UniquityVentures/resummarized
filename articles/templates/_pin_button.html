@@ -1,0 +1,15 @@
+<form action="{% url 'pin_article' article.id %}" fx-action="{% url 'pin_article' article.id %}" fx-target="#pin-button-{{ article.id }}" method="post" fx-method="post" class="z-100">
+	{% csrf_token %}
+<button type="submit" 
+		id="pin-button-{{ article.id }}"
+    
+    class="p-1 rounded cursor-pointer"
+>
+    {% if is_pinned %}
+        {% heroicon_mini "bookmark-slash" %}
+    {% else %}
+        {% heroicon_mini "bookmark" %}
+    {% endif %}
+</button>
+
+</form>

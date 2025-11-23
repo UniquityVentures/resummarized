@@ -20,7 +20,6 @@ class SourceType(models.TextChoices):
     WEB_PAGE = "source_web_page"
 
 
-
 class Source(models.Model):
     name = models.TextField()
 
@@ -36,10 +35,8 @@ class Source(models.Model):
             count += getattr(self, source_type).count()
         return count
 
-
     def get_links(self):
-        return [source.get_link() for source in self.sources()] 
-
+        return [source.get_link() for source in self.sources()]
 
     def __str__(self):
         return f"{self.name} - {self.source_count()} sources"
@@ -65,20 +62,35 @@ class WebSource(models.Model):
         return self.url
 
 
-
 # Create your models here.
 class Article(models.Model):
     title = models.TextField()
 
-    lead_paragraph = models.TextField(help_text="A concise summary of the article's main point.")
-    background_context = models.TextField(help_text="Contextual information leading up to the research.")
-    research_question = models.TextField(help_text="The primary question the research aims to answer.")
-    simplified_methods = models.TextField(help_text="A simplified explanation of the methods used in the study.")
+    lead_paragraph = models.TextField(
+        help_text="A concise summary of the article's main point."
+    )
+    background_context = models.TextField(
+        help_text="Contextual information leading up to the research."
+    )
+    research_question = models.TextField(
+        help_text="The primary question the research aims to answer."
+    )
+    simplified_methods = models.TextField(
+        help_text="A simplified explanation of the methods used in the study."
+    )
     core_findings = models.TextField(help_text="The main findings of the research.")
-    surprise_finding = models.TextField(null=True, blank=True, help_text="Any unexpected results from the study.")
-    future_implications = models.TextField(help_text="The potential implications of the research findings.")
-    study_limitations = models.TextField(help_text="Limitations of the study that may affect interpretation of results.")
-    next_steps = models.TextField(help_text="Suggested future research directions based on the study.")
+    surprise_finding = models.TextField(
+        null=True, blank=True, help_text="Any unexpected results from the study."
+    )
+    future_implications = models.TextField(
+        help_text="The potential implications of the research findings."
+    )
+    study_limitations = models.TextField(
+        help_text="Limitations of the study that may affect interpretation of results."
+    )
+    next_steps = models.TextField(
+        help_text="Suggested future research directions based on the study."
+    )
 
     # Group of Sources from which this article is derived
     based_on = models.ForeignKey(
@@ -104,3 +116,18 @@ class UserArticleHistory(models.Model):
         get_user_model(), on_delete=models.CASCADE, related_name="article_history"
     )
     datetime = models.DateTimeField(default=now, blank=True)
+
+
+class ArticlePins(models.Model):
+    article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name="pins")
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name="pins")
+    datetime = models.DateTimeField(default=now, blank=True)
+
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['article', 'user'], 
+                name='unique_pins'
+            )
+        ]

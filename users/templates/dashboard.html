@@ -1,16 +1,19 @@
 {% load markdownify %}
 {% component "navbar_layout" %}
     <div class="container mt-4">
-        {% component "tabs" tabs=["For You", "Latest"] %}
+        {% component "tabs" tabs=["For You", "Latest", "Pinned Articles"] %}
             {% fill "For You" %}
-		{% component "for_you_articles" %}
-					{% endcomponent %}
+				{% component "for_you_articles" %}
+				{% endcomponent %}
             {% endfill %}
             {% fill "Latest" %}
-
-		{% component "latest_articles" %}
-					{% endcomponent %}
+				{% component "latest_articles" %}
+				{% endcomponent %}
             {% endfill %}
-        {% endcomponent %}
+            {% fill "Pinned Articles" %}
+				{% component "pinned_articles" %}
+				{% endcomponent %}
+            {% endfill %}
+		{% endcomponent %}
     </div>
 {% endcomponent %}

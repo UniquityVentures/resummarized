@@ -1,0 +1,13 @@
+<a 
+    hx-post="{% url 'pin_article' article.id %}" 
+    hx-target="#pin-button-{{ article.id }}" 
+    hx-swap="outerHTML" 
+    class="{% if is_pinned %}bg-red-500 text-white{% else %}bg-green-500 text-white{% endif %} p-1 rounded cursor-pointer"
+
+>
+    {% if is_pinned %}
+        Unpin Article
+    {% else %}
+        Pin Article
+    {% endif %}
+</a>
