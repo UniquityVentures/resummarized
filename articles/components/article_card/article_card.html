@@ -1,5 +1,5 @@
 {% load markdownify %}
-<a href="{% url 'article' article.id %}" {% html_attrs attrs%}>
+<a class="hover:bg-neutral-200" href="{% url 'article' article.id %}" {% html_attrs attrs%}>
 	{% component "card" %}
 	{% fill "title" %}
 	{{ article.title|markdownify }}
