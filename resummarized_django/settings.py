@@ -54,7 +54,6 @@ INSTALLED_APPS = [
     "heroicons",
     "django_extensions",
     "django_celery_results",
-    "markdownify",
     "crispy_forms",
     "crispy_daisyui",
     "django.contrib.admin",
