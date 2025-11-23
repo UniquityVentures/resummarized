@@ -73,7 +73,7 @@ def make_missing_articles(modeladmin, request, queryset):
     annotated_sources = Source.objects.annotate(article_count=Count("articles"))
 
     missing_articles_sources = annotated_sources.filter(article_count=0).order_by("?")[
-        :3
+        :8
     ]
 
     for source in missing_articles_sources:

@@ -1,5 +1,6 @@
 {% load markdown_extras %}
 {% component "navbar_layout" %}
+<div class="container max-w-prose mx-auto">
     {% component "card" %}
         {% fill "title" %}
             {{ article.title|convert_markdown }}
@@ -77,4 +78,5 @@
             {% endif %}
         {% endfill %}
     {% endcomponent %}
+</div>
 {% endcomponent %}

@@ -16,6 +16,7 @@ class DaisyClassTreeprocessor(Treeprocessor):
         ("ul", "list-disc m-4 w-full flex flex-col gap-1"),
         ("ol", "list-decimal m-4 w-full flex flex-col gap-1"),
         ("h1", "my-4"),
+        ("p", "pb-4"),
         ("h2", "my-4"),
         ("h3", "my-4"),
         ("h4", "my-4"),
