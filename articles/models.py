@@ -36,6 +36,11 @@ class Source(models.Model):
             count += getattr(self, source_type).count()
         return count
 
+
+    def get_links(self):
+        return [source.get_link() for source in self.sources()] 
+
+
     def __str__(self):
         return f"{self.name} - {self.source_count()} sources"
 
@@ -46,12 +51,18 @@ class ArxivSource(models.Model):
         Source, on_delete=models.CASCADE, related_name=SourceType.ARXIV
     )
 
+    def get_link(self):
+        return f"https://arxiv.org/abs/{self.arxiv_id}"
+
 
 class WebSource(models.Model):
     url = models.TextField(null=False)
     source = models.ForeignKey(
         Source, on_delete=models.CASCADE, related_name=SourceType.WEB_PAGE
     )
+
+    def get_link(self):
+        return self.url
 
 
 

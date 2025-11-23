@@ -2,6 +2,11 @@
     {% if component_vars.slots.title %}
         <h2 class="card-title mb-2">{% slot "title" / %}</h2>
     {% endif %}
+
+    {% if component_vars.slots.subtitle %}
+		<p class="text-xs opacity-60">{% slot "subtitle" / %}</p>
+    {% endif %}
+
     <div class="card-body">{% slot "default" / %}</div>
     {% if component_vars.slots.actions %}
         <div class="justify-end card-actions">{% slot "actions" / %}</div>
