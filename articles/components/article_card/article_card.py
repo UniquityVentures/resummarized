@@ -10,6 +10,6 @@ class ArticleCardView(component.Component):
             "article": kwargs["article"],
             "attrs": kwargs.get("attrs", {}),
             "is_pinned": kwargs["article"].pins.filter(user=context["user"]).exists()
-            if context.get("user", None) is not None
+            if context.get("user", None) is not None and context["user"].is_authenticated
             else None,
         }

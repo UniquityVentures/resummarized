@@ -11,7 +11,7 @@
 		<p>{{ article.created_at }}</p>
 		{% if user.is_authenticated %}
 			<span id="pin-button-{{ article.id }}">
-				{% include '_pin_button.html' with article=article user=user is_pinned=is_pinned %}
+				{% include '_pin_button.html' with article=article is_pinned=is_pinned %}
 			</span>
 		{% endif %}
 	{% endfill %}
