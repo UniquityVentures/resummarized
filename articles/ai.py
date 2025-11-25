@@ -30,6 +30,7 @@ class AIArticleGenerator:
         Make sure a single line is not very long, ensure frequent line breaks and shorter and more numerous paragraphs
         Always write in third person, never assume you are the writer of the original article.
         Since we are going to be generating the article step by step, only respond with text of what was requested at each step
+        We are going to be generating title and lead_paragraph at the very end.
 
         The title should be short, 50 to 60 charactes maximum
 
@@ -38,6 +39,7 @@ class AIArticleGenerator:
         For the following, use as much markdown as possible to format the text properly.
 
         lead_paragraph = models.TextField(description="Catchy leading paragraph that will be shown on the article listing along with the title")
+
         background_context = models.TextField(description="Contextual information leading up to the research.")
         research_question = models.TextField(description="The primary question the research aims to answer.")
         simplified_methods = models.TextField(description="A simplified explanation of the methods used in the study.")
@@ -119,27 +121,19 @@ class AIArticleGenerator:
         return resp.text
 
     def generate_article(self) -> Article:
-        lead_response_paragraph = self._run_model(
-            [
-                "Based on the provided sources, please generate the article step by step.",
-                "We will be generating title in the final step."
-                "Please generate the lead paragraph of the article.",
-            ],
-        )
-
-        self.increment_step("Generating the lead paragraph")
-
         background_context = self._run_model(
             [
-                "Great! Now, based on the lead paragraph please generate the background context."
+                "Based on the provided sources, please generate the article step by step.",
+                "We will be generating title and the lead_paragraph in the final step."
+                "Please generate the background_context of the article.",
             ],
         )
 
-        self.increment_step("Generating the background context")
+        self.increment_step("Generating the background context ")
 
         research_question = self._run_model(
             [
-                "Now, please generate the research question based on the background context."
+                "Now, please generate the research question."
             ],
         )
 
@@ -191,9 +185,15 @@ class AIArticleGenerator:
 
         self.increment_step("Generating the title")
 
+        lead_paragraph = self._run_model(
+            ["Now, generate the lead paragraph for the completed article."],
+        )
+
+        self.increment_step("Generating the lead paragraph")
+
         article = Article(
             title=title,
-            lead_paragraph=lead_response_paragraph,
+            lead_paragraph=lead_paragraph,
             background_context=background_context,
             research_question=research_question,
             simplified_methods=simplified_methods,
