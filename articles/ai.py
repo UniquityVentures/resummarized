@@ -186,7 +186,7 @@ class AIArticleGenerator:
         self.increment_step("Generating the title")
 
         lead_paragraph = self._run_model(
-            ["Now, generate the lead paragraph for the completed article."],
+            ["Now, generate the lead paragraph for the completed article. Remember to make sure this paragraph is only 50 - 60 words, and can be read at a glance."],
         )
 
         self.increment_step("Generating the lead paragraph")

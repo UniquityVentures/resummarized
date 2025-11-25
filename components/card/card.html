@@ -7,7 +7,7 @@
 		<p class="text-xs opacity-60">{% slot "subtitle" / %}</p>
     {% endif %}
 
-    <div class="card-body px-0">{% slot "default" / %}</div>
+    <div class="card-body px-0 py-2">{% slot "default" / %}</div>
     {% if component_vars.slots.actions %}
         <div class="justify-end card-actions">{% slot "actions" / %}</div>
     {% endif %}

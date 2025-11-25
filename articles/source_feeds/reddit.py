@@ -10,7 +10,7 @@ headers = {"User-Agent": "MyCustomUserAgent/1.0"}
 @register_source_feed
 class RedditSourceFeed(AtomSourceFeed):
     enabled = True
-    urls = ["https://old.reddit.com/r/science/.rss?limit=100"]
+    urls = ["https://old.reddit.com/r/science/.rss?limit=100", "https://old.reddit.com/r/technology.rss?limit=100"]
 
     def fetch_rss(self, url):
         return requests.get(url, headers=headers)

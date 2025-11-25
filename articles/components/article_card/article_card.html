@@ -1,11 +1,11 @@
 {% load markdown_extras %}
-<a class="hover:bg-neutral-200" href="{% url 'article' article.id %}" {% html_attrs attrs%}>
+<a class="hover:bg-neutral-200 max-w-2xl block" href="{% url 'article' article.id %}" {% html_attrs attrs%}>
 	{% component "card" %}
 	{% fill "title" %}
-	{{ article.title|convert_markdown }}
+	{{ article.title }}
 	{% endfill %}
 	{% fill "default" %}
-	<p>{{ article.lead_paragraph|slice:":200"|convert_markdown }} ...</p>
+	<p>{{ article.lead_paragraph|convert_markdown }}</p>
 	{% endfill %}
 	{% fill "actions" %}
 		<p>{{ article.created_at }}</p>
