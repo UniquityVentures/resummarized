@@ -28,11 +28,14 @@ class AIArticleGenerator:
         Add a line break before adding in markdown lists.
         The article should include the following sections:
         Make sure a single line is not very long, ensure frequent line breaks and shorter and more numerous paragraphs
+        Always write in third person, never assume you are the writer of the original article.
         Since we are going to be generating the article step by step, only respond with text of what was requested at each step
+
+        The title should be short, 50 to 60 charactes maximum
 
         title = models.TextField(description="Short catchy title that will be displayed at the top of article and in listings.")
 
-        For the following, use as much markdown as is required to format the text properly.
+        For the following, use as much markdown as possible to format the text properly.
 
         lead_paragraph = models.TextField(description="Catchy leading paragraph that will be shown on the article listing along with the title")
         background_context = models.TextField(description="Contextual information leading up to the research.")

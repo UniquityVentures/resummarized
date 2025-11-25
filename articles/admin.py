@@ -5,9 +5,7 @@ from django.http import HttpResponseRedirect
 from django.db import models
 from django.contrib import admin
 from django.forms import Textarea, TextInput
-from .source_feeds.google import GoogleSourceFeed
-from .source_feeds.meta import MetaSourceFeed
-from .source_feeds.reddit import RedditSourceFeed
+from .source_feeds import base
 from .tasks import generate_article
 from .models import (
     Source,
@@ -47,7 +45,8 @@ class WebSourceInline(admin.TabularInline):
 
 @admin.action(description="Fetch sources from feeds")
 def update_sources(modeladmin, request, queryset):
-    source_feeds = [GoogleSourceFeed, MetaSourceFeed, RedditSourceFeed]
+    source_feeds = base.source_feeds
+    print(source_feeds)
     for source_feed in source_feeds:
         source_feed().fetch_feed()
 

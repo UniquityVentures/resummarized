@@ -6,6 +6,7 @@ from articles.models import WebSource, Source
 headers = {"User-Agent": "MyCustomUserAgent/1.0"}
 
 class RedditSourceFeed(AtomSourceFeed):
+    enabled = True
     urls = ["https://old.reddit.com/r/science/.rss", "https://old.reddit.com/r/science/.rss"]
 
     def fetch_rss(self, url):
