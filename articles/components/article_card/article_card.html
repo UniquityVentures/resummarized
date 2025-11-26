@@ -1,5 +1,5 @@
 {% load markdown_extras %}
-<a class="hover:bg-neutral-200 max-w-2xl block" href="{% url 'article' article.id %}" {% html_attrs attrs%}>
+<div class="hover:bg-neutral-200 max-w-2xl block" {% html_attrs attrs%}>
 	{% component "card" %}
 	{% fill "title" %}
 	{{ article.title }}
@@ -8,7 +8,13 @@
 	<p>{{ article.lead_paragraph|convert_markdown }}</p>
 	{% endfill %}
 	{% fill "actions" %}
-		<p>{{ article.created_at }}</p>
+		<div class="join">
+			{% for tag in article.tags.all %}
+				<div class='badge join-item badge-neutral badge-outline tooltip' data-tip="{{tag.description|truncatechars:256}}">
+					{{tag.name}}
+				</div>
+			{% endfor %}
+		</div>
 		{% if user.is_authenticated %}
 			<span id="pin-button-{{ article.id }}">
 				{% include '_pin_button.html' with article=article is_pinned=is_pinned %}
@@ -16,4 +22,4 @@
 		{% endif %}
 	{% endfill %}
 	{% endcomponent %}
-</a>
+</div>

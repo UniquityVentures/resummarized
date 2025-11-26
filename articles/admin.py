@@ -12,6 +12,7 @@ from .models import (
     ArxivSource,
     WebSource,
     Article,
+    ArticleTag,
     UserArticleHistory,
 )
 
@@ -50,6 +51,12 @@ def update_sources(modeladmin, request, queryset):
     for source_feed in source_feeds:
         source_feed().fetch_feed()
 
+@admin.action(description="Update tags for selected articles")
+def update_tags(modeladmin, request, queryset):
+    for article in queryset:
+        article.update_tags()
+
+
 
 @admin.action(description="Create Articles from selected Sources")
 def make_article_from_source(modeladmin, request, queryset):
@@ -72,7 +79,7 @@ def make_missing_articles(modeladmin, request, queryset):
     annotated_sources = Source.objects.annotate(article_count=Count("articles"))
 
     missing_articles_sources = annotated_sources.filter(article_count=0).order_by("?")[
-        :8
+        :16
     ]
 
     for source in missing_articles_sources:
@@ -95,6 +102,23 @@ class SourceAdmin(admin.ModelAdmin):
     actions = [make_article_from_source, update_sources, make_missing_articles]
 
 
+@admin.register(ArticleTag)
+class ArticleTagAdmin(admin.ModelAdmin):
+    list_display = ("id", "name")
+    search_fields = ("id", "name")
+    list_filter = ("name",)
+
+    fieldsets = (
+        (
+            None,
+            {
+                # Single field per tuple
+                "fields": (("name", "description"),),
+            },
+        ),
+    )
+
+
 # --- Article Admin ---
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
@@ -103,6 +127,7 @@ class ArticleAdmin(admin.ModelAdmin):
     list_display = ("id", "title", "based_on", "created_at")
     search_fields = ("title", "lead_paragraph", "research_question")
     list_filter = ("created_at",)
+    actions = [update_tags]
 
     fieldsets = (
         (
@@ -149,7 +174,7 @@ class ArticleAdmin(admin.ModelAdmin):
         (
             "Metadata",
             {
-                "fields": ("created_at",),
+                "fields": ("created_at", "tags"),
                 "classes": ("collapse",),
             },
         ),

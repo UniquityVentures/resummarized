@@ -3,6 +3,7 @@
 <div class="container max-w-prose mx-auto">
     {% component "card" %}
         {% fill "title" %}
+			{{ article.tags.all }}
             {{ article.title }}
         {% endfill %}
 		{% if article.based_on %}

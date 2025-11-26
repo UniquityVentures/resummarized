@@ -9,6 +9,6 @@
 
     <div class="card-body px-0 py-2">{% slot "default" / %}</div>
     {% if component_vars.slots.actions %}
-        <div class="justify-end card-actions">{% slot "actions" / %}</div>
+        <div class="w-full flex justify-between card-actions">{% slot "actions" / %}</div>
     {% endif %}
 </div>

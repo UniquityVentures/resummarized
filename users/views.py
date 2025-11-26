@@ -38,8 +38,10 @@ class HomePageView(TemplateView):
         if self.request.user.is_authenticated:
             context['user'] = self.request.user
             context['for_you'] = self.request.user.for_you()[:3]
+        context['filter_tags'] = self.request.GET.getlist("filter_tags")
         context['latest'] = Article.objects.all().order_by('-id')[:3]
         return context
+
     def get_template_names(self):
         if self.request.user.is_authenticated:
             return "dashboard.html"

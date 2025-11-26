@@ -1,0 +1,10 @@
+{% for entry in entries %}
+<a href="{{entry.link}}" class="btn w-full flex-1 justify-between py-2 mb-2">
+	<span>
+		{{ entry.name }}
+	</span>
+	<span>
+		{% heroicon_mini entry.icon %}
+	</span>
+</a>
+{% endfor %}

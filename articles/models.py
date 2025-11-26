@@ -1,10 +1,12 @@
 # Create your models here.
 
+
 from django.db import models
 from django.utils.timezone import now
 from pgvector.django import VectorField
 from resummarized_django.embeddings import gen_embedding
 from django.contrib.auth import get_user_model
+from pgvector.django import CosineDistance
 
 
 class ArticleVector(models.Model):
@@ -62,7 +64,20 @@ class WebSource(models.Model):
         return self.url
 
 
-# Create your models here.
+class ArticleTag(models.Model):
+    name = models.CharField(max_length=32)
+    description = models.TextField()
+    vector = VectorField(dimensions=768)
+
+    def save(self, *args, **kwargs):
+        self.vector = gen_embedding(self.description)
+        return super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+
+
+
 class Article(models.Model):
     title = models.TextField()
 
@@ -92,20 +107,33 @@ class Article(models.Model):
         help_text="Suggested future research directions based on the study."
     )
 
-    # Group of Sources from which this article is derived
     based_on = models.ForeignKey(
         Source, on_delete=models.SET_NULL, null=True, related_name="articles"
     )
 
     created_at = models.DateTimeField(default=now, blank=True)
 
-    def save(self, *args, **kwargs):
-        # Generating embedding based on summary from arxiv
-        article = super(Article, self).save(*args, **kwargs)
-        ArticleVector.objects.update_or_create(
-            article=self, vector=gen_embedding(self.lead_paragraph)
+    tags = models.ManyToManyField(ArticleTag, blank=True)
+
+    def __str__(self):
+        return self.title
+
+    def update_tags(self):
+        query_vector = self.vector.first().vector
+
+        SIMILARITY_THRESHOLD = 0.2
+        N = 5
+
+        similar_tags_query0 = ArticleTag.objects.annotate(
+            distance=CosineDistance("vector", query_vector)
         )
-        return article
+        
+        similar_tags_pks = similar_tags_query0.filter(
+            distance__lt=1.0 - SIMILARITY_THRESHOLD
+        ).order_by("distance").values_list('pk', flat=True)[:N]
+        
+
+        self.tags.set(similar_tags_pks)
 
 
 class UserArticleHistory(models.Model):
@@ -120,14 +148,12 @@ class UserArticleHistory(models.Model):
 
 class ArticlePins(models.Model):
     article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name="pins")
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name="pins")
+    user = models.ForeignKey(
+        get_user_model(), on_delete=models.CASCADE, related_name="pins"
+    )
     datetime = models.DateTimeField(default=now, blank=True)
-
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(
-                fields=['article', 'user'], 
-                name='unique_pins'
-            )
+            models.UniqueConstraint(fields=["article", "user"], name="unique_pins")
         ]

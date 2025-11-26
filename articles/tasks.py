@@ -14,3 +14,4 @@ def generate_article(self, source: int):
     generator = AIArticleGenerator(ProgressRecorder(self), source)
     article = generator.generate_article()
     article.save()
+    article.update_tags()

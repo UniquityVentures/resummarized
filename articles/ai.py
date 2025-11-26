@@ -31,10 +31,11 @@ class AIArticleGenerator:
         Always write in third person, never assume you are the writer of the original article.
         Since we are going to be generating the article step by step, only respond with text of what was requested at each step
         We are going to be generating title and lead_paragraph at the very end.
+        Don't add things like "title:" etc. that will be handled externally, only output text
 
         The title should be short, 50 to 60 charactes maximum
 
-        title = models.TextField(description="Short catchy title that will be displayed at the top of article and in listings.")
+        title = models.TextField(description="Short catchy title that will be displayed at the top of article and in listings. This will have no markdown.")
 
         For the following, use as much markdown as possible to format the text properly.
 
@@ -57,7 +58,7 @@ class AIArticleGenerator:
             self.current_step,
             self.total_steps,
             f"Processing item {self.current_step}..."
-            if message is not None
+            if message is None
             else message,
         )
 

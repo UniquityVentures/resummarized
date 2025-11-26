@@ -1,4 +1,3 @@
-import markdown
 from django import template
 from django.template.defaultfilters import stringfilter
 from django.utils.safestring import mark_safe
@@ -18,5 +17,4 @@ def base_url(value):
 @stringfilter
 def favicon(value):
     return base_url(value) + "/favicon.ico"
-
 

@@ -5,7 +5,7 @@
 
 {% if last is not None%}
 	{% component "article_card" article=last 
-	attrs:fx-action="/articles/pinned/?offset={{offset|add:limit}}&limit={{limit}}"
+	attrs:fx-action="{{next}}"
     attrs:fx-trigger="intersect"
     attrs:fx-swap="afterend"
 	%}
