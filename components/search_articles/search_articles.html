@@ -1,0 +1,17 @@
+<span class="sm:inline-flex sm:hidden inline-flex hidden"></span>
+<form class="{% if mobile %} sm:hidden inline-flex {% else %} hidden sm:inline-flex {% endif %} focus:outline-transparent grow" action="/articles/search_datalist/"
+	fx-action="/articles/search_datalist/" fx-target="#articles-datalist">
+	<div class="dropdown grow">
+		<label class="input input-bordered flex items-center gap-2">
+			{% heroicon_mini "magnifying-glass" %}
+			<input id="search" type="search" name="query" class="grow" placeholder="Search"
+				fx-action="/articles/search_datalist/" fx-trigger="input" ext-fx-debounce="200"
+				fx-target="#articles-datalist" fx-swap="innerHTML" autocomplete="off" />
+		</label>
+		<ul tabindex="-1" id="articles-datalist"
+			class="menu grow dropdown-content bg-base-200 rounded-box z-1 mt-4 w-[100%] p-2 shadow-sm">
+			{% component "articles_datalist" %}
+			{% endcomponent %}
+		</ul>
+	</div>
+</form>

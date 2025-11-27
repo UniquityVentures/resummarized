@@ -5,9 +5,5 @@
 	<img src="{{href|favicon}}" alt="{{title}} favicon" class="w-4 h-4 mr-2 rounded-sm shadow-sm inline flex-shrink-0 
                         transition-transform duration-200 group-hover:scale-105"
 		onerror="this.onerror=null;this.style.display='none';">
-	{% if title|length > 63 %}
-		<span>{{title|truncatechars:63}}</span>
-	{% else %}
-		<span>{{title}}</span>
-	{% endif %}
+	<span class="[&>*]:inline">{{title|truncatechars:63}} {% heroicon_micro "link" %}</span>
 </a>

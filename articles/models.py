@@ -38,7 +38,8 @@ class Source(models.Model):
         return count
 
     def get_links(self):
-        return [source.get_link() for source in self.sources()]
+        links = [source.get_link() for source in self.sources()]
+        return links
 
     def __str__(self):
         return f"{self.name} - {self.source_count()} sources"

@@ -1,11 +1,23 @@
+{% load url_extras %}
 {% component "navbar_layout" %}
+	{% component "sidebar" %}
+		{% fill "default" %}
 	{% component "card" %}
 		{% fill "title" %}
 			Latest Articles
 		{% endfill %}
 		{% fill "default" %}
-		{% component "latest_articles" %}
+		{% component "latest_articles" tags=filter_tags %}
 					{% endcomponent %}
 	{% endfill %}
+	{% endcomponent %}
+		{% endfill %}
+		{% fill "sidebar_content" %}
+			<div class="flex flex-col">
+			{% component "search_articles" mobile=True /%}
+				{% component "sidebar_tags" %}
+				{% endcomponent %}
+			</div>
+		{% endfill %}
 	{% endcomponent %}
 {% endcomponent %}
