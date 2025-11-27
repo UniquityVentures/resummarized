@@ -3,75 +3,26 @@
 <div class="container max-w-prose mx-auto">
     {% component "card" %}
         {% fill "title" %}
-			{{ article.tags.all }}
             {{ article.title }}
         {% endfill %}
-		{% if article.based_on %}
-			{% fill "subtitle" %}
-				{% for link in article.based_on.get_links %}
-					Source: {% component "link" href=link title=article.based_on.name %}{% endcomponent %}
+
+		{% fill "subtitle" %}
+			<div class="join">
+				{% for tag in article.tags.all %}
+					<div class='badge join-item badge-neutral badge-outline tooltip' data-tip="{{tag.description|truncatechars:256}}">
+						{{tag.name}}
+					</div>
 				{% endfor %}
-			{% endfill %}
-		{% endif %}
+			</div>
+			<br>
+			{% for link in article.based_on.get_links %}
+				Source: {% component "link" href=link title=article.based_on.name %}{% endcomponent %}
+			{% endfor %}
+		{% endfill %}
+
         {% fill "default" %}
             {% if article.lead_paragraph|length > 0 %}
                 <p>{{ article.lead_paragraph|convert_markdown }}</p>
-            {% endif %}
-            {% if article.background_context|length > 0 %}
-                {% component "collapsible" title="Background Context" %}
-                    {% fill "content" %}
-                        <p>{{ article.background_context|convert_markdown }}</p>
-                    {% endfill %}
-                {% endcomponent %}
-            {% endif %}
-            {% if article.research_direction|length > 0 %}
-                {% component "collapsible" title="Research Direction" %}
-                    {% fill "content" %}
-                        <p>{{ article.research_direction|convert_markdown }}</p>
-                    {% endfill %}
-                {% endcomponent %}
-            {% endif %}
-            {% if article.simplified_methods|length > 0 %}
-                {% component "collapsible" title="Simplified Methods" %}
-                    {% fill "content" %}
-                        <p>{{ article.simplified_methods|convert_markdown }}</p>
-                    {% endfill %}
-                {% endcomponent %}
-            {% endif %}
-            {% if article.core_findings|length > 0 %}
-                {% component "collapsible" title="Core Findings" %}
-                    {% fill "content" %}
-                        <p>{{ article.core_findings|convert_markdown }}</p>
-                    {% endfill %}
-                {% endcomponent %}
-            {% endif %}
-            {% if article.surprise_findings|length > 0 %}
-                {% component "collapsible" title="Surprise Findings" %}
-                    {% fill "content" %}
-                        <p>{{ article.surprise_findings|convert_markdown }}</p>
-                    {% endfill %}
-                {% endcomponent %}
-            {% endif %}
-            {% if article.future_implications|length > 0 %}
-                {% component "collapsible" title="Future Implications" %}
-                    {% fill "content" %}
-                        <p>{{ article.future_implications|convert_markdown }}</p>
-                    {% endfill %}
-                {% endcomponent %}
-            {% endif %}
-            {% if article.study_limitations|length > 0 %}
-                {% component "collapsible" title="Study Limitations" %}
-                    {% fill "content" %}
-                        <p>{{ article.study_limitations|convert_markdown }}</p>
-                    {% endfill %}
-                {% endcomponent %}
-            {% endif %}
-            {% if article.next_steps|length > 0 %}
-                {% component "collapsible" title="Next Steps" %}
-                    {% fill "content" %}
-                        <p>{{ article.next_steps|convert_markdown }}</p>
-                    {% endfill %}
-                {% endcomponent %}
             {% endif %}
         {% endfill %}
     {% endcomponent %}

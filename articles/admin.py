@@ -143,32 +143,9 @@ class ArticleAdmin(admin.ModelAdmin):
                 # Single field per tuple
                 "fields": (
                     ("lead_paragraph",),
-                    ("background_context",),
-                    ("research_question",),
                 ),
                 # Note: 'description' here is correct for ModelAdmin fieldsets
                 "description": "The core narrative elements of the article.",
-            },
-        ),
-        (
-            "Study Details",
-            {
-                # Single field per tuple
-                "fields": (
-                    ("simplified_methods",),
-                    ("core_findings",),
-                    ("surprise_finding",),
-                    ("study_limitations",),
-                ),
-                "description": "In-depth information about the study.",
-            },
-        ),
-        (
-            "Forward Look",
-            {
-                # Single field per tuple
-                "fields": (("future_implications",), ("next_steps",)),
-                "description": "Impact and future work.",
             },
         ),
         (

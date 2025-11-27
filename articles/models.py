@@ -85,28 +85,6 @@ class Article(models.Model):
     lead_paragraph = models.TextField(
         help_text="A concise summary of the article's main point."
     )
-    background_context = models.TextField(
-        help_text="Contextual information leading up to the research."
-    )
-    research_question = models.TextField(
-        help_text="The primary question the research aims to answer."
-    )
-    simplified_methods = models.TextField(
-        help_text="A simplified explanation of the methods used in the study."
-    )
-    core_findings = models.TextField(help_text="The main findings of the research.")
-    surprise_finding = models.TextField(
-        null=True, blank=True, help_text="Any unexpected results from the study."
-    )
-    future_implications = models.TextField(
-        help_text="The potential implications of the research findings."
-    )
-    study_limitations = models.TextField(
-        help_text="Limitations of the study that may affect interpretation of results."
-    )
-    next_steps = models.TextField(
-        help_text="Suggested future research directions based on the study."
-    )
 
     based_on = models.ForeignKey(
         Source, on_delete=models.SET_NULL, null=True, related_name="articles"

@@ -41,14 +41,6 @@ class AIArticleGenerator:
 
         lead_paragraph = models.TextField(description="Catchy leading paragraph that will be shown on the article listing along with the title")
 
-        background_context = models.TextField(description="Contextual information leading up to the research.")
-        research_question = models.TextField(description="The primary question the research aims to answer.")
-        simplified_methods = models.TextField(description="A simplified explanation of the methods used in the study.")
-        core_findings = models.TextField(description="The main findings of the research.")
-        surprise_finding = models.TextField(description="Any unexpected results from the study.")
-        future_implications = models.TextField(description="The potential implications of the research findings.")
-        study_limitations = models.TextField(description="Limitations of the study that may affect interpretation of results.")
-        next_steps = models.TextField(description="Suggested future research directions based on the study.")
     """
 
     def increment_step(self, message=None):
@@ -122,69 +114,6 @@ class AIArticleGenerator:
         return resp.text
 
     def generate_article(self) -> Article:
-        background_context = self._run_model(
-            [
-                "Based on the provided sources, please generate the article step by step.",
-                "We will be generating title and the lead_paragraph in the final step."
-                "Please generate the background_context of the article.",
-            ],
-        )
-
-        self.increment_step("Generating the background context ")
-
-        research_question = self._run_model(
-            [
-                "Now, please generate the research question."
-            ],
-        )
-
-        self.increment_step("Generating the research question")
-
-        simplified_methods = self._run_model(
-            ["Next, please generate the simplified methods section."],
-        )
-
-        self.increment_step("Generating the simplified methods")
-
-        core_findings = self._run_model(
-            ["Now, please generate the core findings of the research."],
-        )
-
-        self.increment_step("Generating the core findings")
-
-        surprise_finding = self._run_model(
-            ["Please generate any surprise findings from the study."],
-        )
-
-        self.increment_step("Generating the surprise finding")
-
-        future_implications = self._run_model(
-            ["Now, please generate the future implications of the research findings."],
-        )
-
-        self.increment_step("Generating the future implications")
-
-        study_limitations = self._run_model(
-            [
-                "Please outline the study limitations that may affect interpretation of results."
-            ],
-        )
-
-        self.increment_step("Generating the study limitations")
-
-        next_steps = self._run_model(
-            [
-                "Finally, please suggest next steps for future research based on the study."
-            ],
-        )
-
-        self.increment_step("Generating the next steps")
-
-        title = self._run_model(
-            ["Now, generate the title for the completed article."],
-        )
-
-        self.increment_step("Generating the title")
 
         lead_paragraph = self._run_model(
             ["Now, generate the lead paragraph for the completed article. Remember to make sure this paragraph is only 50 - 60 words, and can be read at a glance."],
@@ -192,17 +121,16 @@ class AIArticleGenerator:
 
         self.increment_step("Generating the lead paragraph")
 
+        title = self._run_model(
+            ["Now, generate the title for the completed article."],
+        )
+
+        self.increment_step("Generating the title")
+
+
         article = Article(
             title=title,
             lead_paragraph=lead_paragraph,
-            background_context=background_context,
-            research_question=research_question,
-            simplified_methods=simplified_methods,
-            core_findings=core_findings,
-            surprise_finding=surprise_finding,
-            future_implications=future_implications,
-            study_limitations=study_limitations,
-            next_steps=next_steps,
             based_on=self.source,
         )
         return article
