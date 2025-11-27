@@ -21,7 +21,7 @@
 			</span>
 		{% endif %}
 	{% endfill %}
-	{% fill "footer" %}
+	{% fill "subtitle" %}
 		{% for link in article.based_on.get_links %}
 			Source: {% component "link" href=link title=article.based_on.name %}{% endcomponent %}
 		{% endfor %}
