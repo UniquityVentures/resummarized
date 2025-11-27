@@ -73,13 +73,13 @@ def make_article_from_source(modeladmin, request, queryset):
 
 
 @admin.action(
-    description="Create Articles for sources which have no corresponding articles, limit 10 at a time"
+    description="Create Articles for sources which have no corresponding articles, limit 32 at a time"
 )
 def make_missing_articles(modeladmin, request, queryset):
     annotated_sources = Source.objects.annotate(article_count=Count("articles"))
 
     missing_articles_sources = annotated_sources.filter(article_count=0).order_by("?")[
-        :16
+        :32
     ]
 
     for source in missing_articles_sources:
