@@ -1,30 +1,25 @@
 {% load markdown_extras %}
-<div class="hover:bg-neutral-200 max-w-2xl block" {% html_attrs attrs%}>
-	{% component "card" %}
+{% component "card" class="max-w-2xl block"%}
 	{% fill "title" %}
-	{{ article.title }}
-	{% endfill %}
-	{% fill "default" %}
-	<p>{{ article.lead_paragraph|convert_markdown }}</p>
-	{% endfill %}
-	{% fill "actions" %}
-		<div class="join">
-			{% for tag in article.tags.all %}
-				<div class='badge join-item badge-neutral badge-outline tooltip' data-tip="{{tag.description|truncatechars:256}}">
-					{{tag.name}}
-				</div>
-			{% endfor %}
-		</div>
-		{% if user.is_authenticated %}
-			<span id="pin-button-{{ article.id }}">
-				{% include '_pin_button.html' with article=article is_pinned=is_pinned %}
-			</span>
-		{% endif %}
+		{{ article.title }}
 	{% endfill %}
 	{% fill "subtitle" %}
 		{% for link in article.based_on.get_links %}
 			Source: {% component "link" href=link title=article.based_on.name %}{% endcomponent %}
 		{% endfor %}
 	{% endfill %}
-	{% endcomponent %}
-</div>
+	{% fill "default" %}
+		<p>{{ article.lead_paragraph|convert_markdown }}</p>
+	{% endfill %}
+	{% fill "actions" %}
+		<div class="join">
+			{% for tag in article.tags.all %}
+				<div class='badge join-item badge-neutral badge-outline tooltip'
+					 data-tip="{{ tag.description|truncatechars:256 }}">{{ tag.name }}</div>
+			{% endfor %}
+		</div>
+		{% if user.is_authenticated %}
+			<span id="pin-button-{{ article.id }}">{% include '_pin_button.html' with article=article is_pinned=is_pinned %}</span>
+		{% endif %}
+	{% endfill %}
+{% endcomponent %}

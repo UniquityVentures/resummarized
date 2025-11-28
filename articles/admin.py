@@ -3,10 +3,9 @@ from django.db.models import Count
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.db import models
-from django.contrib import admin
 from django.forms import Textarea, TextInput
 from .source_feeds import base
-from .tasks import generate_article
+from .tasks import generate_article, generate_video
 from .models import (
     Source,
     ArxivSource,
@@ -51,11 +50,24 @@ def update_sources(modeladmin, request, queryset):
     for source_feed in source_feeds:
         source_feed().fetch_feed()
 
+
 @admin.action(description="Update tags for selected articles")
 def update_tags(modeladmin, request, queryset):
     for article in queryset:
         article.update_tags()
 
+
+@admin.action(description="Generate videos for the selected articles")
+def make_video_from_article(modeladmin, request, queryset):
+    tasks = []
+    print("Starting to queue article generation tasks...")
+    for article in queryset:
+        print(f"Queuing article generation for Article ID: {article.id}")
+        tasks.append(generate_video.delay(article.id))
+
+    if len(tasks) > 0:
+        progress_url = reverse("article_generation_progress")
+        return HttpResponseRedirect(f"{progress_url}?task_id={tasks[0].id}")
 
 
 @admin.action(description="Create Articles from selected Sources")
@@ -108,6 +120,7 @@ class ArticleTagAdmin(admin.ModelAdmin):
     search_fields = ("id", "name")
     list_filter = ("name",)
 
+
     fieldsets = (
         (
             None,
@@ -127,7 +140,7 @@ class ArticleAdmin(admin.ModelAdmin):
     list_display = ("id", "title", "based_on", "created_at")
     search_fields = ("title", "lead_paragraph", "research_question")
     list_filter = ("created_at",)
-    actions = [update_tags]
+    actions = [update_tags, make_video_from_article]
 
     fieldsets = (
         (
@@ -141,9 +154,7 @@ class ArticleAdmin(admin.ModelAdmin):
             "Core Narrative",
             {
                 # Single field per tuple
-                "fields": (
-                    ("lead_paragraph",),
-                ),
+                "fields": (("lead_paragraph",),),
                 # Note: 'description' here is correct for ModelAdmin fieldsets
                 "description": "The core narrative elements of the article.",
             },

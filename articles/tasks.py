@@ -1,8 +1,6 @@
-from .models import (
-    Source,
-)
+from .models import Source, Article
 
-from .ai import AIArticleGenerator
+from .ai import AIArticleGenerator, VideoGenerator
 from celery_progress.backend import ProgressRecorder
 from resummarized_django.celery import app
 
@@ -15,3 +13,13 @@ def generate_article(self, source: int):
     article = generator.generate_article()
     article.save()
     article.update_tags()
+
+
+@app.task(bind=True)
+def generate_video(self, article: int):
+    print("Starting article generation task...")
+    artilce = Article.objects.get(id=article)
+    generator = VideoGenerator(ProgressRecorder(self), artilce)
+    script = generator.generate_manim_script()
+    print(script)
+    return script

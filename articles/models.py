@@ -78,7 +78,6 @@ class ArticleTag(models.Model):
         return self.name
 
 
-
 class Article(models.Model):
     title = models.TextField()
 
@@ -94,6 +93,9 @@ class Article(models.Model):
 
     tags = models.ManyToManyField(ArticleTag, blank=True)
 
+    def generate_video(self):
+        print("Generating Video")
+
     def __str__(self):
         return self.title
 
@@ -106,11 +108,12 @@ class Article(models.Model):
         similar_tags_query0 = ArticleTag.objects.annotate(
             distance=CosineDistance("vector", query_vector)
         )
-        
-        similar_tags_pks = similar_tags_query0.filter(
-            distance__lt=1.0 - SIMILARITY_THRESHOLD
-        ).order_by("distance").values_list('pk', flat=True)[:N]
-        
+
+        similar_tags_pks = (
+            similar_tags_query0.filter(distance__lt=1.0 - SIMILARITY_THRESHOLD)
+            .order_by("distance")
+            .values_list("pk", flat=True)[:N]
+        )
 
         self.tags.set(similar_tags_pks)
 
@@ -136,3 +139,10 @@ class ArticlePins(models.Model):
         constraints = [
             models.UniqueConstraint(fields=["article", "user"], name="unique_pins")
         ]
+
+
+class ArticleVideo(models.Model):
+    article = models.OneToOneField(
+        Article, on_delete=models.CASCADE, related_name="video", primary_key=True
+    )
+    file = models.FileField()
