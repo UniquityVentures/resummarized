@@ -192,6 +192,18 @@ if not DEBUG:
         },
     }
 
+    MEDIA_URL = "https://storage.googleapis.com/{}/".format(GS_BUCKET_NAME)
+
+    GCS_ROOT = "https://storage.googleapis.com/{bucket_name}/".format(
+        bucket_name=GS_BUCKET_NAME
+    )
+        
+    MEDIA_PREFIX = "media"
+    MEDIA_URL = "{gcs_root}{prefix}/".format(
+        gcs_root=GCS_ROOT,
+        prefix=MEDIA_PREFIX,
+    )
+
 if DEBUG:
     # Add django_browser_reload only in DEBUG mode
     INSTALLED_APPS += ["django_browser_reload"]
@@ -201,3 +213,4 @@ if DEBUG:
 
     MEDIA_URL = "/media/"
     MEDIA_ROOT = "media/"
+
