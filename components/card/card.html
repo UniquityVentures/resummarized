@@ -1,5 +1,12 @@
-<div class="card p-4 my-2 pb-0 {{ class }}"
+<div class="card p-4 my-2 pb-0 {% if component_vars.slots.figure %}flex-col lg:flex-row {% endif %} {{ class }}"
    {% html_attrs attrs %}>
+	
+    {% if component_vars.slots.figure %}
+  <figure class="mr-2">
+    {% slot "figure" / %}
+  </figure>
+	<div>
+    {% endif %}
     {% if component_vars.slots.title %}
         <h2 class="card-title mb-2">{% slot "title" / %}</h2>
     {% endif %}
@@ -19,4 +26,8 @@
 		</div>
     {% endif %}
 	
+    {% if component_vars.slots.figure %}
+
+		</div>
+    {% endif %}
 </div>

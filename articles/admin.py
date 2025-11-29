@@ -13,6 +13,7 @@ from .models import (
     Article,
     ArticleTag,
     UserArticleHistory,
+    ArticleVideo,
 )
 
 
@@ -120,7 +121,6 @@ class ArticleTagAdmin(admin.ModelAdmin):
     search_fields = ("id", "name")
     list_filter = ("name",)
 
-
     fieldsets = (
         (
             None,
@@ -130,6 +130,13 @@ class ArticleTagAdmin(admin.ModelAdmin):
             },
         ),
     )
+
+
+@admin.register(ArticleVideo)
+class ArticleVideoAdmin(admin.ModelAdmin):
+    list_display = ("article",)
+    search_fields = ("article",)
+    list_filter = ("article",)
 
 
 # --- Article Admin ---

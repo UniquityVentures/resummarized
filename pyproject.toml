@@ -13,6 +13,7 @@ dependencies = [
     "django-components>=0.143.2",
     "django-crispy-forms>=2.5",
     "django-extensions>=4.1",
+    "django-storages[google]>=1.14.6",
     "django-tailwind[cookiecutter,honcho,reload]>=4.4.1",
     "dotenv>=0.9.9",
     "google-genai>=1.50.1",

@@ -1,4 +1,8 @@
 from google import genai
+import uuid
+from string import Template
+import sys
+import subprocess
 from django.core.files import File
 import os
 from bs4 import BeautifulSoup
@@ -11,9 +15,10 @@ import requests
 import tempfile
 import manim
 
+
 client = None
 
-model = "models/gemini-2.5-pro"
+model = "models/gemini-3-pro-preview"
 
 
 def get_genai_client():
@@ -24,23 +29,28 @@ def get_genai_client():
     return client
 
 
-manim_docs = None
+manim_docs = {}
 
 
-def get_manim_docs():
+def get_manim_docs(system_prompt):
     global manim_docs
-    if manim_docs is not None:
-        return manim_docs
+
+    if system_prompt in manim_docs:
+        return manim_docs[system_prompt]
+
     context = top_level_module_info(manim)
-    manim_docs = client.caches.create(
+    manim_docs[system_prompt] = client.caches.create(
         model=model,
-        contents=context,
         config={
             "display_name": "Manim Docs",
-            "system_instruction": "These are the functions available at the topmost level in manim",
+            "contents": types.Content(
+                role="user", parts=[types.Part.from_text(text=context)]
+            ),
+            "system_instruction": system_prompt,
         },
     )
-    print(context)
+
+    return manim_docs[system_prompt]
 
 
 class AIArticleGenerator:
@@ -168,6 +178,11 @@ class AIArticleGenerator:
         )
         return article
 
+runner_template = Template("""
+with tempconfig({'output_file': '$filename', 'quality': 'low_quality'}):
+        scene = Video()
+        scene.render()
+""")
 
 class VideoGenerator:
     article: Article
@@ -184,14 +199,16 @@ class VideoGenerator:
 
     manim_system_prompt = """
         You are a professional python programmer with experience in working with the manim library to generate videos
-        Your task is to read the generated script, that the user will provide, to generate a python program using manim library and the base python libraries to generate a video that follows the script.
+        Your task is to read the generated script, that the user will provide, to generate a python program using manim community 0.19 library and the base python libraries to generate a video that follows the script.
         Additionally the entire conversation history will also be present for cross referencing.
         ONLY OUTPUT THE PYTHON CODE, NOTHING ELSE, as this will be going straight for execution in a python sandbox.
+        Make sure that you are importing anything that you need, and don't assume that anything is imported or predefined.
+        Import or define colors explicitly, don't assume that they are already imported
     """
 
     def increment_step(self, message=None):
         self.current_step += 1
-        print(f"Processing item {self.current_step}...")
+        print(f"Processing item {self.current_step} {message}...")
         self.progress_recorder.set_progress(
             self.current_step,
             self.total_steps,
@@ -199,12 +216,14 @@ class VideoGenerator:
         )
 
     def _run_model(self, system_prompt: str, text: List[str], manim: bool = False):
+        if manim:
+            config = types.GenerateContentConfig(cached_content=get_manim_docs(system_prompt).name)
+        else:
+            config = types.GenerateContentConfig(system_instruction=[system_prompt])
+
         resp = self.chat.send_message(
-            message=[get_manim_docs()]
-            if manim
-            else []
-            + [types.Part.from_text(text=text_segment) for text_segment in text],
-            config=types.GenerateContentConfig(system_instruction=[system_prompt]),
+            message=[types.Part.from_text(text=text_segment) for text_segment in text],
+            config=config
         )
         return resp.text
 
@@ -276,6 +295,7 @@ class VideoGenerator:
 
     def generate_manim_script(self) -> str:
         script = self.generate_script()
+
         print(script)
         self.increment_step("Generating the manim python script.")
         manim_script = (
@@ -285,24 +305,36 @@ class VideoGenerator:
                     script,
                     "Now generate the corresponding python script that will generate the video for this script, Remember to make sure the class name for the scene is 'Video'",
                 ],
+                manim=True
             )
             .strip()
             .strip("```python")
             .strip()
         )
-        manim_script += """
-with tempconfig({'output_file': 'VIDEO.mp4'}):
-        scene = DemoScene()
-        scene.render()
-"""
+
+        filename = f"/tmp/VIDEO-{uuid.uuid4().hex}.mp4"
+        manim_script += runner_template.substitute(filename=filename)
         print(manim_script)
+        with tempfile.NamedTemporaryFile(delete_on_close=False) as script_file:
+            self.increment_step("Running manim script.")
+            script_file.write(bytes(manim_script, encoding="utf-8"))
+            script_file.flush()
+            print(script_file.name)
+            print(script_file.read())
+            ## FUCK IT, TRUST AI
+            # Do as i say, not as i do
+            subprocess.Popen(
+                [sys.executable, script_file.name],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            ).wait()
 
-        ## FUCK IT, TRUST AI
-        # Do as i say, not as i do
-        exec(manim_script)
 
-        with open("VIDEO.mp4", "rb") as f:
-            video_file = File(f, name=os.path.basename("VIDEO.mp4"))
+
+        self.increment_step("Saving manim video to db")
+
+        with open(filename, "rb") as f:
+            video_file = File(f, name=os.path.basename(filename))
 
             # 4. Create and save the ArticleVideo instance
             article_video_instance = ArticleVideo(
@@ -312,3 +344,4 @@ with tempconfig({'output_file': 'VIDEO.mp4'}):
             article_video_instance.save()
 
         return manim_script
+

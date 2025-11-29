@@ -2,6 +2,14 @@
 {% component "navbar_layout" %}
 <div class="container max-w-prose mx-auto">
     {% component "card" %}
+		{% if article.video %}
+			{% fill "figure" %}
+				<video controls>
+					<source src="{{article.video.file}}" type="video/mp4">
+					 Your browser does not support the video tag.
+				</video>
+			{% endfill %}
+		{% endif %}
         {% fill "title" %}
             {{ article.title }}
         {% endfill %}

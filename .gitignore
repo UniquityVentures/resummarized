@@ -12,3 +12,6 @@ wheels/
 
 source.zip
 source.tar
+media/
+
+*.mp4

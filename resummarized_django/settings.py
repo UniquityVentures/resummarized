@@ -175,6 +175,23 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "daisyui"
 CRISPY_TEMPLATE_PACK = "daisyui"
 CELERY_RESULT_BACKEND = 'django-db'
 
+GS_BUCKET_NAME = "lariv-bucket"
+
+if not DEBUG:
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.gcloud.GoogleCloudStorage",
+            "OPTIONS": {
+                "bucket_name": GS_BUCKET_NAME,
+                "file_overwrite": False,
+                "iam_sign_blob": True,
+            },
+        },
+        "staticfiles": {
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        },
+    }
+
 if DEBUG:
     # Add django_browser_reload only in DEBUG mode
     INSTALLED_APPS += ["django_browser_reload"]
@@ -182,4 +199,5 @@ if DEBUG:
         "django_browser_reload.middleware.BrowserReloadMiddleware",
     ]
 
-
+    MEDIA_URL = "/media/"
+    MEDIA_ROOT = "media/"
