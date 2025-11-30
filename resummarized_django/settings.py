@@ -185,6 +185,7 @@ if not DEBUG:
                 "bucket_name": GS_BUCKET_NAME,
                 "file_overwrite": False,
                 "iam_sign_blob": True,
+                "querystring_auth": False,
             },
         },
         "staticfiles": {

@@ -13,7 +13,10 @@ from typing import List
 from .get_module_info import top_level_module_info
 import requests
 import tempfile
-import manim
+import manim as manim_module
+from manim_voiceover import VoiceoverScene
+from manim_voiceover.services.coqui import CoquiService
+from manim import *
 
 
 client = None
@@ -38,7 +41,7 @@ def get_manim_docs(system_prompt):
     if system_prompt in manim_docs:
         return manim_docs[system_prompt]
 
-    context = top_level_module_info(manim)
+    context = top_level_module_info(manim_module)
     manim_docs[system_prompt] = client.caches.create(
         model=model,
         config={
@@ -200,6 +203,7 @@ class VideoGenerator:
     manim_system_prompt = """
         You are a professional python programmer with experience in working with the manim library to generate videos
         Your task is to read the generated script, that the user will provide, to generate a python program using manim community 0.19 library and the base python libraries to generate a video that follows the script.
+        Use manim-voiceover to add voiceover to the scenes, use the CoquiService for generating voiceover.
         Additionally the entire conversation history will also be present for cross referencing.
         ONLY OUTPUT THE PYTHON CODE, NOTHING ELSE, as this will be going straight for execution in a python sandbox.
         Make sure that you are importing anything that you need, and don't assume that anything is imported or predefined.
@@ -313,10 +317,15 @@ class VideoGenerator:
         )
 
         filename = f"/tmp/VIDEO-{uuid.uuid4().hex}.mp4"
+
         manim_script += runner_template.substitute(filename=filename)
+
         print(manim_script)
-        with tempfile.NamedTemporaryFile(delete_on_close=False) as script_file:
-            self.increment_step("Running manim script.")
+
+        self.increment_step("Running manim script.")
+
+        """
+        with tempfile.NamedTemporaryFile() as script_file:
             script_file.write(bytes(manim_script, encoding="utf-8"))
             script_file.flush()
             print(script_file.name)
@@ -328,8 +337,9 @@ class VideoGenerator:
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
             ).wait()
+        """
 
-
+        exec(manim_script)
 
         self.increment_step("Saving manim video to db")
 
