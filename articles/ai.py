@@ -182,7 +182,7 @@ class AIArticleGenerator:
         return article
 
 runner_template = Template("""
-with tempconfig({'output_file': '$filename', 'quality': 'low_quality'}):
+with tempconfig({'output_file': '$filename', 'quality': 'low_quality', 'flush_cache': True}):
         scene = Video()
         scene.render()
 """)
@@ -352,6 +352,7 @@ class VideoGenerator:
                 file=video_file,  # Assign the File object to the FileField
             )
             article_video_instance.save()
+        os.remove(filename)
 
         return manim_script
 
