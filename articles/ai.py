@@ -22,7 +22,7 @@ from manim import *
 
 client = None
 
-model = "models/gemini-3-pro-preview"
+model = "models/gemini-2.5-pro"
 
 
 def get_genai_client():
