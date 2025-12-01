@@ -1,4 +1,5 @@
 from google import genai
+from datetime import datetime
 import uuid
 from string import Template
 import sys
@@ -38,7 +39,11 @@ manim_docs = {}
 def get_manim_docs(system_prompt):
     global manim_docs
 
-    if system_prompt in manim_docs:
+    if (
+        system_prompt in manim_docs
+        and manim_docs[system_prompt].expire_time is not None
+        and manim_docs[system_prompt].expire_time < datetime.now()
+    ):
         return manim_docs[system_prompt]
 
     context = top_level_module_info(manim_module)
@@ -181,11 +186,13 @@ class AIArticleGenerator:
         )
         return article
 
+
 runner_template = Template("""
 with tempconfig({'output_file': '$filename', 'quality': 'low_quality', 'flush_cache': True}):
         scene = Video()
         scene.render()
 """)
+
 
 class VideoGenerator:
     article: Article
@@ -221,13 +228,15 @@ class VideoGenerator:
 
     def _run_model(self, system_prompt: str, text: List[str], manim: bool = False):
         if manim:
-            config = types.GenerateContentConfig(cached_content=get_manim_docs(system_prompt).name)
+            config = types.GenerateContentConfig(
+                cached_content=get_manim_docs(system_prompt).name
+            )
         else:
             config = types.GenerateContentConfig(system_instruction=[system_prompt])
 
         resp = self.chat.send_message(
             message=[types.Part.from_text(text=text_segment) for text_segment in text],
-            config=config
+            config=config,
         )
         return resp.text
 
@@ -309,7 +318,7 @@ class VideoGenerator:
                     script,
                     "Now generate the corresponding python script that will generate the video for this script, Remember to make sure the class name for the scene is 'Video'",
                 ],
-                manim=True
+                manim=True,
             )
             .strip()
             .strip("```python")
@@ -355,4 +364,3 @@ class VideoGenerator:
         os.remove(filename)
 
         return manim_script
-
